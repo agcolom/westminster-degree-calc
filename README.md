@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# University of Westminster Degree Classification Calculator
 
-## Getting Started
+A web-based calculator that helps students and staff understand how module scores translate into final degree classifications at the University of Westminster.
 
-First, run the development server:
+## About
+
+This calculator implements the official University of Westminster degree classification rules, including the two provisional score system. It provides clear, immediate feedback on degree trajectory and helps students make informed decisions about their studies.
+
+## Features
+
+- **Accurate Classification**: Implements official University degree classification rules
+- **Two Provisional Scores**: Handles the complexity of the dual provisional score system automatically
+- **User-Friendly Interface**: Clean, intuitive design built with Next.js and Tailwind CSS
+- **Instant Feedback**: Real-time calculation as module scores are entered
+- **Accessible**: Works on desktop and mobile devices
+
+## Who Is This For?
+
+- **Students**: Understand how your module scores impact your final degree classification
+- **Academic Staff**: Reliable tool for advising students during tutorials and planning sessions
+- **Administrative Staff**: Quick reference for handling student queries about degree progression
+
+## Usage
+
+Visit the live calculator at: [https://agcolom.github.io/westminster-degree-calc/](https://agcolom.github.io/westminster-degree-calc/)
+
+## Technology Stack
+
+- [Next.js 15](https://nextjs.org/) - React framework
+- [React 19](https://react.dev/) - UI library
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [shadcn/ui](https://ui.shadcn.com/) - UI components
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+
+## Development
+
+### Prerequisites
+
+- Node.js 20 or higher
+- npm or yarn
+
+### Getting Started
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/agcolom/westminster-degree-calc.git
+   cd westminster-degree-calc
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+### Building for Production
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run export
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This creates a static build in the `out/` directory, including a `standalone.html` file that can be hosted anywhere.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Deploy to GitHub Pages:
 
-## Learn More
+```bash
+./deploy.sh
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+├── app/
+│   ├── layout.tsx          # Root layout with metadata
+│   ├── page.tsx            # Main calculator page
+│   └── globals.css         # Global styles
+├── components/
+│   └── ui/                 # shadcn/ui components
+├── public/                 # Static assets
+├── process-html.js         # Script to create standalone HTML
+├── deploy.sh               # Deployment script
+└── next.config.js          # Next.js configuration
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
+MIT License - See [LICENSE](LICENSE) file for details
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contact
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For questions or feedback about this calculator, please contact the University of Westminster Academic Support team.
+
+## Disclaimer
+
+This calculator is provided as a guide only. Official degree classifications are determined by the University's examination boards following the complete academic regulations. Always refer to official University documentation for authoritative information.
