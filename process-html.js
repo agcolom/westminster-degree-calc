@@ -7,6 +7,10 @@ async function processHTML() {
   const htmlPath = path.join(outDir, 'index.html');
   const outputPath = path.join(outDir, 'standalone.html');
 
+  // Create .nojekyll file for GitHub Pages to serve _next directory
+  fs.writeFileSync(path.join(outDir, '.nojekyll'), '');
+  console.log('Created .nojekyll file for GitHub Pages');
+
   try {
     let html = fs.readFileSync(htmlPath, 'utf8');
     
@@ -38,10 +42,6 @@ async function processHTML() {
 
     fs.writeFileSync(outputPath, result);
     console.log('Successfully created standalone.html');
-
-    // Create .nojekyll file for GitHub Pages to serve _next directory
-    fs.writeFileSync(path.join(outDir, '.nojekyll'), '');
-    console.log('Created .nojekyll file for GitHub Pages');
   } catch (err) {
     console.error('Error processing HTML:', err);
   }
