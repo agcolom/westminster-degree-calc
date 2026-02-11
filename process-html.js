@@ -38,6 +38,10 @@ async function processHTML() {
 
     fs.writeFileSync(outputPath, result);
     console.log('Successfully created standalone.html');
+
+    // Create .nojekyll file for GitHub Pages to serve _next directory
+    fs.writeFileSync(path.join(outDir, '.nojekyll'), '');
+    console.log('Created .nojekyll file for GitHub Pages');
   } catch (err) {
     console.error('Error processing HTML:', err);
   }
