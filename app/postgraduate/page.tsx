@@ -236,19 +236,32 @@ export default function PostgraduatePage() {
     const totalCredits = level6Credits + level7Credits;
 
     // Validate credit requirements
-    if (totalCredits < award.minCredits) {
-      setError(`Insufficient credits (${totalCredits}/${award.minCredits}). You need at least ${award.minCredits} credits.`);
-      return;
-    }
+    if (award.integrated) {
+      // For Integrated Masters, both levels have strict minimum requirements
+      if (level6Credits < award.maxLevel6) {
+        setError(`Insufficient Level 6 credits (${level6Credits}/${award.maxLevel6}). You need at least ${award.maxLevel6} credits at Level 6.`);
+        return;
+      }
+      if (level7Credits < award.totalLevel7) {
+        setError(`Insufficient Level 7 credits (${level7Credits}/${award.totalLevel7}). You need at least ${award.totalLevel7} credits at Level 7.`);
+        return;
+      }
+    } else {
+      // For other awards
+      if (totalCredits < award.minCredits) {
+        setError(`Insufficient credits (${totalCredits}/${award.minCredits}). You need at least ${award.minCredits} credits.`);
+        return;
+      }
 
-    if (level6Credits > award.maxLevel6) {
-      setError(`Too many Level 6 credits (${level6Credits}/${award.maxLevel6} max). Maximum ${award.maxLevel6} credits at Level 6.`);
-      return;
-    }
+      if (level6Credits > award.maxLevel6) {
+        setError(`Too many Level 6 credits (${level6Credits}/${award.maxLevel6} max). Maximum ${award.maxLevel6} credits at Level 6.`);
+        return;
+      }
 
-    if (level7Credits < award.totalLevel7) {
-      setError(`Insufficient Level 7 credits (${level7Credits}/${award.totalLevel7}). You need at least ${award.totalLevel7} credits at Level 7.`);
-      return;
+      if (level7Credits < award.totalLevel7) {
+        setError(`Insufficient Level 7 credits (${level7Credits}/${award.totalLevel7}). You need at least ${award.totalLevel7} credits at Level 7.`);
+        return;
+      }
     }
 
     // Validate passing marks
@@ -364,10 +377,17 @@ export default function PostgraduatePage() {
     let isValid = true;
 
     if (level === "6") {
-      requiredCredits = award.maxLevel6 > 0 ? `/ ${award.maxLevel6} max` : "";
-      isValid = totalCredits <= award.maxLevel6;
+      if (award.integrated) {
+        // For integrated masters, Level 6 needs to reach the required amount
+        requiredCredits = `/ ${award.maxLevel6}`;
+        isValid = totalCredits >= award.maxLevel6;
+      } else {
+        // For other awards, Level 6 is optional with a maximum
+        requiredCredits = award.maxLevel6 > 0 ? `/ ${award.maxLevel6} max` : "";
+        isValid = totalCredits <= award.maxLevel6;
+      }
     } else if (level === "7") {
-      requiredCredits = `/ ${award.totalLevel7} min`;
+      requiredCredits = `/ ${award.totalLevel7}`;
       isValid = totalCredits >= award.totalLevel7;
     } else {
       requiredCredits = `/ ${award.minCredits}`;
