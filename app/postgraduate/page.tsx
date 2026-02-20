@@ -1,0 +1,643 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Trash2, Moon, Sun } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+interface Module {
+  name: string;
+  credits: string;
+  mark: string;
+  level: string;
+  id: string;
+}
+
+const awardTypes = {
+  pgcert: {
+    label: "Postgraduate Certificate (PgCert)",
+    minCredits: 60,
+    maxLevel6: 20,
+    totalLevel7: 60,
+    integrated: false
+  },
+  pgdip: {
+    label: "Postgraduate Diploma (PgDip)",
+    minCredits: 120,
+    maxLevel6: 20,
+    totalLevel7: 120,
+    integrated: false
+  },
+  mfa: {
+    label: "Master of Fine Arts (MFA)",
+    minCredits: 240,
+    maxLevel6: 0,
+    totalLevel7: 240,
+    integrated: false
+  },
+  mres: {
+    label: "Master by Research (MRes)",
+    minCredits: 180,
+    maxLevel6: 20,
+    totalLevel7: 180,
+    integrated: false
+  },
+  erasmus: {
+    label: "Erasmus Mundus Master's",
+    minCredits: 240,
+    maxLevel6: 20,
+    totalLevel7: 240,
+    integrated: false
+  },
+  masters: {
+    label: "Master's Degree (MA, MSc, MBA, LLM, MArch, MMus)",
+    minCredits: 180,
+    maxLevel6: 20,
+    totalLevel7: 180,
+    integrated: false
+  },
+  integrated: {
+    label: "Integrated Masters (MEng, MLaw, MSci)",
+    minCredits: 240,
+    maxLevel6: 120,
+    totalLevel7: 120,
+    integrated: true
+  },
+};
+
+type AwardTypeKey = keyof typeof awardTypes;
+
+const getMarkColor = (mark: number) => {
+  const hue = mark <= 40
+    ? mark * 1.5
+    : mark <= 50
+      ? 60
+      : mark <= 70
+        ? 60 + ((mark - 50) * 3)
+        : 120 + ((mark - 70) * 4);
+  const saturation = 85;
+  const lightness = 65;
+  return `border-[hsl(${hue}_${saturation}%_${lightness}%)]`;
+};
+
+const getGradeTextColor = (mark: number) => {
+  const hue = mark <= 40
+    ? mark * 1.5
+    : mark <= 50
+      ? 60
+      : mark <= 70
+        ? 60 + ((mark - 50) * 3)
+        : 120 + ((mark - 70) * 4);
+  return `text-[hsl(${hue}_50%_35%)] dark:text-[hsl(${hue}_40%_65%)]`;
+};
+
+const createInitialModules = (awardType: AwardTypeKey): Module[] => {
+  const award = awardTypes[awardType];
+  if (award.integrated) {
+    // For integrated masters, create 6 modules for each level
+    const level6Modules = Array(6).fill(null).map((_, index) => ({
+      name: "",
+      credits: "20",
+      mark: "0",
+      level: "6",
+      id: `module-${index + 1}`
+    }));
+    const level7Modules = Array(6).fill(null).map((_, index) => ({
+      name: "",
+      credits: "20",
+      mark: "0",
+      level: "7",
+      id: `module-${index + 7}`
+    }));
+    return [...level6Modules, ...level7Modules];
+  } else {
+    // For other awards, create initial Level 7 modules
+    return Array(6).fill(null).map((_, index) => ({
+      name: "",
+      credits: "20",
+      mark: "0",
+      level: "7",
+      id: `module-${index + 1}`
+    }));
+  }
+};
+
+export default function PostgraduatePage() {
+  const [mounted, setMounted] = useState(false);
+  const [selectedAward, setSelectedAward] = useState<AwardTypeKey>("masters");
+  const [modules, setModules] = useState<Module[]>(createInitialModules("masters"));
+  const [result, setResult] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    setMounted(true);
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme("dark");
+      document.body.classList.add("dark");
+    }
+  }, []);
+
+  // Update modules when award type changes
+  useEffect(() => {
+    setModules(createInitialModules(selectedAward));
+    setResult("");
+    setError("");
+  }, [selectedAward]);
+
+  const toggleTheme = () => {
+    setTheme(current => {
+      const newTheme = current === "light" ? "dark" : "light";
+      if (newTheme === "dark") {
+        document.body.classList.add("dark");
+      } else {
+        document.body.classList.remove("dark");
+      }
+      return newTheme;
+    });
+  };
+
+  const handleAddModule = (level?: string) => {
+    const newLevel = level || (awardTypes[selectedAward].integrated ? "6" : "7");
+    setModules([
+      ...modules,
+      {
+        name: "",
+        credits: "20",
+        mark: "0",
+        level: newLevel,
+        id: `module-${modules.length + 1}`
+      }
+    ]);
+  };
+
+  const handleRemoveModule = (moduleId: string) => {
+    setModules(modules.filter(m => m.id !== moduleId));
+  };
+
+  const handleModuleChange = (
+    index: number,
+    field: keyof Module,
+    value: string
+  ) => {
+    setModules(modules.map((module, i) =>
+      i === index ? { ...module, [field]: value } : module
+    ));
+  };
+
+  const calculateDegree = () => {
+    setError("");
+    const award = awardTypes[selectedAward];
+
+    // Get valid modules (with marks and credits)
+    const validModules = modules.filter(module =>
+      module.mark !== "" && !isNaN(Number(module.mark)) &&
+      module.credits !== "" && !isNaN(Number(module.credits))
+    ).map(module => ({
+      ...module,
+      mark: Number(module.mark),
+      credits: Number(module.credits)
+    }));
+
+    if (validModules.length === 0) {
+      setError("Please enter at least one module with credits and mark");
+      return;
+    }
+
+    // Split by level
+    const level6Modules = validModules.filter(m => m.level === "6");
+    const level7Modules = validModules.filter(m => m.level === "7");
+
+    // Check if all modules have passing marks
+    const level6Failed = level6Modules.filter(m => m.mark < 40);
+    const level7Failed = level7Modules.filter(m => m.mark < 50);
+
+    const allPassed = level6Failed.length === 0 && level7Failed.length === 0;
+
+    // Calculate credits
+    const level6Credits = level6Modules.reduce((sum, m) => sum + m.credits, 0);
+    const level7Credits = level7Modules.reduce((sum, m) => sum + m.credits, 0);
+    const totalCredits = level6Credits + level7Credits;
+
+    // Validate credit requirements
+    if (totalCredits < award.minCredits) {
+      setError(`Insufficient credits (${totalCredits}/${award.minCredits}). You need at least ${award.minCredits} credits.`);
+      return;
+    }
+
+    if (level6Credits > award.maxLevel6) {
+      setError(`Too many Level 6 credits (${level6Credits}/${award.maxLevel6} max). Maximum ${award.maxLevel6} credits at Level 6.`);
+      return;
+    }
+
+    if (level7Credits < award.totalLevel7) {
+      setError(`Insufficient Level 7 credits (${level7Credits}/${award.totalLevel7}). You need at least ${award.totalLevel7} credits at Level 7.`);
+      return;
+    }
+
+    // Validate passing marks
+    if (level6Failed.length > 0) {
+      const failedNames = level6Failed.map(m => m.name || `Level 6 module (${m.mark}%)`).join(", ");
+      setError(`Failed Level 6 modules (need 40%): ${failedNames}`);
+      return;
+    }
+
+    if (level7Failed.length > 0) {
+      const failedNames = level7Failed.map(m => m.name || `Level 7 module (${m.mark}%)`).join(", ");
+      setError(`Failed Level 7 modules (need 50%): ${failedNames}`);
+      return;
+    }
+
+    // Calculate weighted average
+    let weightedSum = 0;
+    let totalWeightedCredits = 0;
+
+    if (award.integrated) {
+      // For integrated masters, calculate based on combined L6 and L7
+      weightedSum = validModules.reduce((sum, m) => sum + (m.mark * m.credits), 0);
+      totalWeightedCredits = totalCredits;
+    } else {
+      // For regular postgrad awards, only use L7 for classification
+      weightedSum = level7Modules.reduce((sum, m) => sum + (m.mark * m.credits), 0);
+      totalWeightedCredits = level7Credits;
+    }
+
+    const average = weightedSum / totalWeightedCredits;
+
+    // Determine classification
+    let classification = "";
+    let classificationWithoutFirstAttempt = "";
+
+    if (average >= 70) {
+      classification = "Distinction";
+    } else if (average >= 60) {
+      classification = "Merit";
+    } else if (average >= 50) {
+      classification = "Pass";
+    } else {
+      classification = "Fail";
+    }
+
+    // For integrated masters, also show classification without first attempt requirement
+    if (award.integrated) {
+      classificationWithoutFirstAttempt = classification;
+      if (!allPassed && classification === "Distinction") {
+        classification = "Merit";
+      }
+      if (!allPassed && classification === "Merit") {
+        classification = "Pass";
+      }
+    }
+
+    // Create result message
+    let resultMessage = `Average Score: ${average.toFixed(2)}%\n`;
+
+    if (award.integrated) {
+      resultMessage += `\n`;
+      if (allPassed) {
+        resultMessage += `Classification: ${classification}\n`;
+        resultMessage += `\nNote: You passed all modules at first attempt.`;
+      } else {
+        resultMessage += `Classification: ${classification}\n`;
+        resultMessage += `\nNote: You did not pass all modules at first attempt.\n`;
+        resultMessage += `If you had passed all modules at first attempt, your classification would have been: ${classificationWithoutFirstAttempt}`;
+      }
+      resultMessage += `\n\nDetails:\n`;
+      resultMessage += `Level 6 Average: ${level6Credits > 0 ? (level6Modules.reduce((sum, m) => sum + (m.mark * m.credits), 0) / level6Credits).toFixed(2) : 0}%\n`;
+      resultMessage += `Level 7 Average: ${level7Credits > 0 ? (level7Modules.reduce((sum, m) => sum + (m.mark * m.credits), 0) / level7Credits).toFixed(2) : 0}%\n`;
+      resultMessage += `Level 6 Credits: ${level6Credits}\n`;
+      resultMessage += `Level 7 Credits: ${level7Credits}`;
+    } else {
+      resultMessage += `Classification: ${classification}\n`;
+      resultMessage += `\nDetails:\n`;
+      resultMessage += `Level 7 Average: ${average.toFixed(2)}%\n`;
+      resultMessage += `Level 7 Credits: ${level7Credits}`;
+      if (level6Credits > 0) {
+        resultMessage += `\nLevel 6 Credits: ${level6Credits}`;
+      }
+    }
+
+    setResult(resultMessage);
+  };
+
+  const handleReset = () => {
+    setModules([{ name: "", credits: "20", mark: "0", level: "7", id: "module-1" }]);
+    setResult("");
+    setError("");
+  };
+
+  const renderCreditTotal = (level?: string) => {
+    const award = awardTypes[selectedAward];
+    let filteredModules = modules;
+
+    if (level) {
+      filteredModules = modules.filter(m => m.level === level);
+    }
+
+    const validModules = filteredModules.filter(module =>
+      module.credits !== "" && !isNaN(Number(module.credits)) &&
+      module.mark !== "" && !isNaN(Number(module.mark))
+    );
+    const totalCredits = validModules.reduce((sum, m) => sum + Number(m.credits), 0);
+
+    let requiredCredits = "";
+    let isValid = true;
+
+    if (level === "6") {
+      requiredCredits = award.maxLevel6 > 0 ? `/ ${award.maxLevel6} max` : "";
+      isValid = totalCredits <= award.maxLevel6;
+    } else if (level === "7") {
+      requiredCredits = `/ ${award.totalLevel7} min`;
+      isValid = totalCredits >= award.totalLevel7;
+    } else {
+      requiredCredits = `/ ${award.minCredits}`;
+      isValid = totalCredits >= award.minCredits;
+    }
+
+    return (
+      <div className={`text-sm font-medium ${isValid ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+        Total Credits: {totalCredits} {requiredCredits}
+      </div>
+    );
+  };
+
+  const renderModuleInput = (module: Module, index: number) => {
+    const mark = Number(module.mark || "0");
+    const markColor = getMarkColor(mark);
+    const textColor = getGradeTextColor(mark);
+    const minPassingMark = module.level === "7" ? 50 : 40;
+
+    return (
+      <div
+        key={module.id}
+        className="p-3 border-2 rounded-lg relative transition-colors overflow-hidden"
+        suppressHydrationWarning
+      >
+        <div className="flex justify-between items-start gap-2">
+          <div className="grid grid-cols-1 xs:grid-cols-[2fr,auto,auto,auto] gap-2 flex-grow">
+            <div className="space-y-1">
+              <Label htmlFor={`${module.id}-name`} className={`text-sm font-medium ${textColor}`}>Module Name/Code</Label>
+              <Input
+                id={`${module.id}-name`}
+                value={module.name}
+                onChange={(e) => handleModuleChange(index, "name", e.target.value)}
+                placeholder="e.g., Module Name"
+                className={`h-8 w-full min-w-[10ch] ${markColor}`}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor={`${module.id}-credits`} className={`text-sm font-medium ${textColor}`}>Credits</Label>
+              <Input
+                id={`${module.id}-credits`}
+                type="number"
+                min="0"
+                max="120"
+                step="20"
+                value={module.credits}
+                onChange={(e) => handleModuleChange(index, "credits", e.target.value)}
+                placeholder="20"
+                className={`h-8 w-16 ${markColor}`}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor={`${module.id}-level`} className={`text-sm font-medium ${textColor}`}>Level</Label>
+              <Select
+                value={module.level}
+                onValueChange={(value) => handleModuleChange(index, "level", value)}
+              >
+                <SelectTrigger id={`${module.id}-level`} className={`h-8 w-24 ${markColor}`}>
+                  <SelectValue placeholder="Level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="6">Level 6</SelectItem>
+                  <SelectItem value="7">Level 7</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor={`${module.id}-mark-input`} className={`text-sm font-medium ${textColor}`}>
+                Mark
+              </Label>
+              <Input
+                id={`${module.id}-mark-input`}
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                value={module.mark}
+                onChange={(e) => handleModuleChange(index, "mark", e.target.value)}
+                className={`w-20 h-8 text-sm ${markColor}`}
+              />
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-gray-400 hover:text-red-600 dark:text-gray-600 dark:hover:text-red-400 h-8 w-8"
+            onClick={() => handleRemoveModule(module.id)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="mt-2">
+          <Slider
+            id={`${module.id}-mark-slider`}
+            min={0}
+            max={100}
+            step={0.1}
+            value={[mark]}
+            onValueChange={(value) => handleModuleChange(index, "mark", value[0].toString())}
+            className="[&_[role=slider]]:!bg-white dark:[&_[role=slider]]:!bg-slate-50 [&_.absolute.h-full]:!bg-current"
+            style={{ color: `hsl(${mark <= 40
+              ? mark * 1.5
+              : mark <= 50
+                ? 60
+                : mark <= 70
+                  ? 60 + ((mark - 50) * 3)
+                  : 120 + ((mark - 70) * 4)
+            } 90% 45%)` }}
+          />
+        </div>
+        {mark < minPassingMark && mark > 0 && (
+          <div className="mt-1 text-xs text-red-600 dark:text-red-400">
+            Level {module.level} requires {minPassingMark}% to pass
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  if (!mounted) return null;
+
+  const award = awardTypes[selectedAward];
+  const level6Modules = modules.filter(m => m.level === "6");
+  const level7Modules = modules.filter(m => m.level === "7");
+
+  return (
+    <main className="min-h-screen p-4 md:p-8 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-200 transition-colors" suppressHydrationWarning>
+      <Card className="max-w-7xl mx-auto relative shadow-lg bg-white dark:bg-slate-900" suppressHydrationWarning>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-4 top-4 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+          onClick={toggleTheme}
+        >
+          {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+        </Button>
+        <CardHeader>
+          <CardTitle className="text-4xl font-bold tracking-tight">Postgraduate Degree Calculator</CardTitle>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="about">
+              <AccordionTrigger className="text-lg">About</AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-4">
+                  <p className="text-lg leading-relaxed">
+                    This calculator determines your postgraduate degree classification based on your module scores.
+                    Select your award type and enter your module details. Level 7 modules require 50% to pass, Level 6 modules require 40%.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Developed by Anne-Gaelle Colom, University of Westminster
+                  </p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-8">
+            <div className="space-y-2">
+              <Label htmlFor="award-type" className="text-lg font-semibold">Award Type</Label>
+              <Select value={selectedAward} onValueChange={(value) => setSelectedAward(value as AwardTypeKey)}>
+                <SelectTrigger id="award-type" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(awardTypes).map(([key, award]) => (
+                    <SelectItem key={key} value={key}>
+                      {award.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {award.integrated ? (
+              // Side-by-side layout for Integrated Masters
+              <div className="flex flex-col lg:flex-row gap-8">
+                <div className="space-y-4 flex-1">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold tracking-tight">Level 6 Modules</h3>
+                    {renderCreditTotal("6")}
+                  </div>
+                  <div className="space-y-4">
+                    {level6Modules.map((module, index) => {
+                      const originalIndex = modules.findIndex(m => m.id === module.id);
+                      return renderModuleInput(module, originalIndex);
+                    })}
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => handleAddModule("6")}
+                    >
+                      Add Level 6 Module
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-4 flex-1">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold tracking-tight">Level 7 Modules</h3>
+                    {renderCreditTotal("7")}
+                  </div>
+                  <div className="space-y-4">
+                    {level7Modules.map((module, index) => {
+                      const originalIndex = modules.findIndex(m => m.id === module.id);
+                      return renderModuleInput(module, originalIndex);
+                    })}
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => handleAddModule("7")}
+                    >
+                      Add Level 7 Module
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              // Single column layout for other awards
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold tracking-tight">Modules</h3>
+                  {renderCreditTotal()}
+                </div>
+                <div className="space-y-4">
+                  {modules.map((module, index) => renderModuleInput(module, index))}
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => handleAddModule()}
+                  >
+                    Add Module
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-center gap-4">
+              <Button
+                onClick={calculateDegree}
+                className="w-full max-w-xs text-lg font-semibold"
+                variant="outline"
+                size="lg"
+              >
+                Calculate Classification
+              </Button>
+              <Button
+                onClick={handleReset}
+                className="w-full max-w-xs text-lg font-semibold"
+                variant="outline"
+                size="lg"
+              >
+                Reset All
+              </Button>
+            </div>
+
+            {error && (
+              <div className="mt-4 p-4 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-center font-medium">
+                {error}
+              </div>
+            )}
+
+            {result && !error && (
+              <div className={`mt-4 p-4 rounded-lg text-center font-medium whitespace-pre-line ${
+                result.includes("Distinction") ? "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" :
+                result.includes("Merit") ? "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400" :
+                result.includes("Pass") ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400" :
+                "bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+              }`}>
+                {result}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </main>
+  );
+}
