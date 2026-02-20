@@ -350,10 +350,14 @@ export default function PostgraduatePage() {
       filteredModules = modules.filter(m => m.level === level);
     }
 
-    const validModules = filteredModules.filter(module =>
-      module.credits !== "" && !isNaN(Number(module.credits)) &&
-      module.mark !== "" && !isNaN(Number(module.mark))
-    );
+    // Only count modules that have passing marks
+    const validModules = filteredModules.filter(module => {
+      if (module.credits === "" || isNaN(Number(module.credits))) return false;
+      if (module.mark === "" || isNaN(Number(module.mark))) return false;
+      const mark = Number(module.mark);
+      const minPassingMark = module.level === "7" ? 50 : 40;
+      return mark >= minPassingMark;
+    });
     const totalCredits = validModules.reduce((sum, m) => sum + Number(m.credits), 0);
 
     let requiredCredits = "";
