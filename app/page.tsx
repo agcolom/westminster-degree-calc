@@ -37,27 +37,30 @@ const createInitialModules = (level: string, count: number): Module[] =>
   }));
 
 const getMarkColor = (mark: number) => {
-  // Convert mark to hue:
-  // 0 = red (0)
-  // 40 = orange (30)
-  // 70 = green (120)
-  // 100 = blue (240)
-  const hue = mark <= 40 
-    ? mark * 0.75 // 0-40 maps to 0-30 (red to orange)
-    : mark <= 70
-      ? 30 + ((mark - 40) * 3) // 40-70 maps to 30-120 (orange to green)
-      : 120 + ((mark - 70) * 4); // 70-100 maps to 120-240 (green to blue)
-  const saturation = 60;
+  // 0-40: red to yellow (hue 0 to 60)
+  // 40-50: yellow (hue 60)
+  // 50-70: yellow to green (hue 60 to 120)
+  // 70-100: green to blue (hue 120 to 240)
+  const hue = mark <= 40
+    ? mark * 1.5  // 0-40 maps to 0-60 (red to yellow)
+    : mark <= 50
+      ? 60  // 40-50 stays at yellow
+      : mark <= 70
+        ? 60 + ((mark - 50) * 3)  // 50-70 maps to 60-120 (yellow to green)
+        : 120 + ((mark - 70) * 4);  // 70-100 maps to 120-240 (green to blue)
+  const saturation = 85;  // High saturation everywhere
   const lightness = 65;
   return `border-[hsl(${hue}_${saturation}%_${lightness}%)]`;
 };
 
 const getGradeTextColor = (mark: number) => {
-  const hue = mark <= 40 
-    ? mark * 0.75 // 0-40 maps to 0-30 (red to orange)
-    : mark <= 70
-      ? 30 + ((mark - 40) * 3) // 40-70 maps to 30-120 (orange to green)
-      : 120 + ((mark - 70) * 4); // 70-100 maps to 120-240 (green to blue)
+  const hue = mark <= 40
+    ? mark * 1.5
+    : mark <= 50
+      ? 60
+      : mark <= 70
+        ? 60 + ((mark - 50) * 3)
+        : 120 + ((mark - 70) * 4);
   return `text-[hsl(${hue}_50%_35%)] dark:text-[hsl(${hue}_40%_65%)]`;
 };
 
@@ -481,12 +484,14 @@ export default function Home() {
                       // No need for explicit recalculation here as handleModuleChange will handle it
                     }}
                     className="[&_[role=slider]]:!bg-white dark:[&_[role=slider]]:!bg-slate-50 [&_.absolute.h-full]:!bg-current"
-                    style={{ color: `hsl(${mark <= 40 
-                      ? mark * 0.75
-                      : mark <= 70
-                        ? 30 + ((mark - 40) * 3)
-                        : 120 + ((mark - 70) * 4)
-                    } 70% 45%)` }}
+                    style={{ color: `hsl(${mark <= 40
+                      ? mark * 1.5
+                      : mark <= 50
+                        ? 60
+                        : mark <= 70
+                          ? 60 + ((mark - 50) * 3)
+                          : 120 + ((mark - 70) * 4)
+                    } 90% 45%)` }}
                   />
                 </div>
               </div>
