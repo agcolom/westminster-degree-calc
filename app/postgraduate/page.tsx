@@ -127,8 +127,16 @@ const createInitialModules = (awardType: AwardTypeKey): Module[] => {
     }));
     return [...level6Modules, ...level7Modules];
   } else {
-    // Calculate number of modules based on minimum credits (assuming 20 credits per module)
-    const numModules = Math.ceil(award.minCredits / 20);
+    // Start with appropriate number of modules for each award type
+    let numModules = 3; // Default for PgCert (60 credits)
+    if (awardType === 'pgdip') {
+      numModules = 6; // 120 credits
+    } else if (awardType === 'masters' || awardType === 'mres') {
+      numModules = 7; // 180 credits (typically includes large project)
+    } else if (awardType === 'mfa' || awardType === 'erasmus') {
+      numModules = 12; // 240 credits
+    }
+
     return Array(numModules).fill(null).map((_, index) => ({
       name: "",
       credits: "20",
