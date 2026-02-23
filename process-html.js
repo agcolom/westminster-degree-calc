@@ -5,7 +5,7 @@ const { inlineSource } = require('inline-source');
 async function processHTML() {
   const outDir = path.join(__dirname, 'out');
   const htmlPath = path.join(outDir, 'index.html');
-  const outputPath = path.join(outDir, 'standalone.html');
+  const outputPath = path.join(outDir, 'ugStandalone.html');
 
   // Create .nojekyll file for GitHub Pages to serve _next directory
   fs.writeFileSync(path.join(outDir, '.nojekyll'), '');
@@ -45,7 +45,7 @@ async function processHTML() {
     });
 
     fs.writeFileSync(outputPath, result);
-    console.log('Successfully created standalone.html');
+    console.log('Successfully created ugStandalone.html');
   } catch (err) {
     console.error('Error processing HTML:', err);
   }
