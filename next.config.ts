@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
+const isProd = process.env.NODE_ENV === 'production';
+
 const nextConfig = {
   output: 'export',
-  basePath: '/westminster-degree-calc',
-  assetPrefix: '/westminster-degree-calc',
+  basePath: isProd ? '/westminster-degree-calc' : '',
+  assetPrefix: isProd ? '/westminster-degree-calc' : '',
   images: {
     unoptimized: true,
   },
