@@ -147,6 +147,10 @@ export default function Home() {
     const totalCredits = level5Credits + level6Credits;
 
     // Validate credit requirements - must have at least 120 at each level
+    if (level5Credits < 120 && level6Credits < 120) {
+      setError(`Insufficient passing credits. Level 5: ${level5Credits}/120, Level 6: ${level6Credits}/120. You need at least 120 credits at each level with marks of 40% or higher.`);
+      return;
+    }
     if (level5Credits < 120) {
       setError(`Insufficient passing Level 5 credits (${level5Credits}/120). You need at least 120 credits at Level 5 with marks of 40% or higher.`);
       return;
