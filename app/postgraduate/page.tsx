@@ -138,7 +138,7 @@ const createInitialModules = (awardType: AwardTypeKey): Module[] => {
     } else if (awardType === 'mfa') {
       numModules = 6; // 240 credits (includes large portfolio/practice modules)
     } else if (awardType === 'erasmus') {
-      numModules = 12; // 240 credits
+      numModules = 7; // 240 credits
     }
 
     return Array(numModules).fill(null).map((_, index) => ({
