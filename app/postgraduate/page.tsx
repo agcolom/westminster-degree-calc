@@ -209,9 +209,63 @@ export default function PostgraduatePage() {
     field: keyof Module,
     value: string
   ) => {
-    setModules(modules.map((module, i) =>
+    const newModules = modules.map((module, i) =>
       i === index ? { ...module, [field]: value } : module
-    ));
+    );
+    setModules(newModules);
+
+    // If this is a mark or credits change and we've had a previous calculation
+    if ((field === "mark" || field === "credits") && (result || error)) {
+      // Schedule the validation and calculation to run after state update
+      setTimeout(() => {
+        const award = awardTypes[selectedAward];
+
+        // Get valid modules with the updated state
+        const validModules = newModules.filter(module =>
+          module.mark !== "" && !isNaN(Number(module.mark)) &&
+          module.credits !== "" && !isNaN(Number(module.credits))
+        ).map(module => ({
+          ...module,
+          mark: Number(module.mark),
+          credits: Number(module.credits)
+        }));
+
+        // Separate by level
+        const level6Modules = validModules.filter(m => m.level === "6");
+        const level7Modules = validModules.filter(m => m.level === "7");
+
+        // Get passing modules only (40% for L6, 50% for L7)
+        const level6Passing = level6Modules.filter(m => m.mark >= 40);
+        const level7Passing = level7Modules.filter(m => m.mark >= 50);
+
+        // Calculate credits from passing modules only
+        const level6Credits = level6Passing.reduce((sum, m) => sum + m.credits, 0);
+        const level7Credits = level7Passing.reduce((sum, m) => sum + m.credits, 0);
+
+        // Update error message if needed
+        if (award.integrated) {
+          if (level6Credits < award.maxLevel6 || level7Credits < award.totalLevel7) {
+            setError(`Insufficient passing credits. Level 6: ${level6Credits}/${award.maxLevel6}, Level 7: ${level7Credits}/${award.totalLevel7}. You need at least ${award.maxLevel6} credits at Level 6 (40%+) and ${award.totalLevel7} credits at Level 7 (50%+).`);
+            setResult(""); // Clear any previous result when credits are insufficient
+          } else {
+            setError(""); // Clear any previous error
+            calculateDegree();
+          }
+        } else {
+          if (level6Credits < award.maxLevel6 && level7Credits < award.totalLevel7) {
+            if (award.maxLevel6 > 0) {
+              setError(`Insufficient passing credits. Level 6: ${level6Credits}/${award.maxLevel6}, Level 7: ${level7Credits}/${award.totalLevel7}. You need at least ${award.totalLevel7} credits at Level 7 (50%+), with up to ${award.maxLevel6} credits from Level 6 (40%+).`);
+            } else {
+              setError(`Insufficient passing Level 7 credits (${level7Credits}/${award.totalLevel7}). You need at least ${award.totalLevel7} credits at Level 7 with marks of 50% or higher.`);
+            }
+            setResult(""); // Clear any previous result when credits are insufficient
+          } else {
+            setError(""); // Clear any previous error
+            calculateDegree();
+          }
+        }
+      }, 0);
+    }
   };
 
   const calculateDegree = () => {
