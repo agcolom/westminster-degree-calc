@@ -237,32 +237,43 @@ export default function PostgraduatePage() {
     const level6Modules = validModules.filter(m => m.level === "6");
     const level7Modules = validModules.filter(m => m.level === "7");
 
-    // Check if all modules have passing marks
-    const level6Failed = level6Modules.filter(m => m.mark < 40);
-    const level7Failed = level7Modules.filter(m => m.mark < 50);
+    // Get passing modules only (40% for L6, 50% for L7)
+    const level6Passing = level6Modules.filter(m => m.mark >= 40);
+    const level7Passing = level7Modules.filter(m => m.mark >= 50);
 
-    const allPassed = level6Failed.length === 0 && level7Failed.length === 0;
-
-    // Calculate credits
-    const level6Credits = level6Modules.reduce((sum, m) => sum + m.credits, 0);
-    const level7Credits = level7Modules.reduce((sum, m) => sum + m.credits, 0);
+    // Calculate credits from passing modules only
+    const level6Credits = level6Passing.reduce((sum, m) => sum + m.credits, 0);
+    const level7Credits = level7Passing.reduce((sum, m) => sum + m.credits, 0);
     const totalCredits = level6Credits + level7Credits;
 
-    // Validate credit requirements
+    const allPassed = level6Modules.length === level6Passing.length && level7Modules.length === level7Passing.length;
+
+    // Validate credit requirements with better error messages
     if (award.integrated) {
       // For Integrated Masters, both levels have strict minimum requirements
+      if (level6Credits < award.maxLevel6 && level7Credits < award.totalLevel7) {
+        setError(`Insufficient passing credits. Level 6: ${level6Credits}/${award.maxLevel6}, Level 7: ${level7Credits}/${award.totalLevel7}. You need at least ${award.maxLevel6} credits at Level 6 (40%+) and ${award.totalLevel7} credits at Level 7 (50%+).`);
+        return;
+      }
       if (level6Credits < award.maxLevel6) {
-        setError(`Insufficient Level 6 credits (${level6Credits}/${award.maxLevel6}). You need at least ${award.maxLevel6} credits at Level 6.`);
+        setError(`Insufficient passing Level 6 credits (${level6Credits}/${award.maxLevel6}). You need at least ${award.maxLevel6} credits at Level 6 with marks of 40% or higher.`);
         return;
       }
       if (level7Credits < award.totalLevel7) {
-        setError(`Insufficient Level 7 credits (${level7Credits}/${award.totalLevel7}). You need at least ${award.totalLevel7} credits at Level 7.`);
+        setError(`Insufficient passing Level 7 credits (${level7Credits}/${award.totalLevel7}). You need at least ${award.totalLevel7} credits at Level 7 with marks of 50% or higher.`);
         return;
       }
     } else {
-      // For other awards
-      if (totalCredits < award.minCredits) {
-        setError(`Insufficient credits (${totalCredits}/${award.minCredits}). You need at least ${award.minCredits} credits.`);
+      // For other awards, check Level 7 and Level 6 separately
+      const needsLevel6 = award.maxLevel6 > 0;
+
+      if (level7Credits < award.totalLevel7 && needsLevel6 && level6Credits > award.maxLevel6) {
+        setError(`Insufficient Level 7 credits (${level7Credits}/${award.totalLevel7}) and too many Level 6 credits (${level6Credits}/${award.maxLevel6} max). You need at least ${award.totalLevel7} credits at Level 7 (50%+) and maximum ${award.maxLevel6} credits at Level 6.`);
+        return;
+      }
+
+      if (level7Credits < award.totalLevel7) {
+        setError(`Insufficient passing Level 7 credits (${level7Credits}/${award.totalLevel7}). You need at least ${award.totalLevel7} credits at Level 7 with marks of 50% or higher.`);
         return;
       }
 
@@ -270,24 +281,6 @@ export default function PostgraduatePage() {
         setError(`Too many Level 6 credits (${level6Credits}/${award.maxLevel6} max). Maximum ${award.maxLevel6} credits at Level 6.`);
         return;
       }
-
-      if (level7Credits < award.totalLevel7) {
-        setError(`Insufficient Level 7 credits (${level7Credits}/${award.totalLevel7}). You need at least ${award.totalLevel7} credits at Level 7.`);
-        return;
-      }
-    }
-
-    // Validate passing marks
-    if (level6Failed.length > 0) {
-      const failedNames = level6Failed.map(m => m.name || `Level 6 module (${m.mark}%)`).join(", ");
-      setError(`Failed Level 6 modules (need 40%): ${failedNames}`);
-      return;
-    }
-
-    if (level7Failed.length > 0) {
-      const failedNames = level7Failed.map(m => m.name || `Level 7 module (${m.mark}%)`).join(", ");
-      setError(`Failed Level 7 modules (need 50%): ${failedNames}`);
-      return;
     }
 
     // Calculate weighted average
