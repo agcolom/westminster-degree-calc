@@ -546,7 +546,17 @@ export default function PostgraduatePage() {
                 <div className="space-y-4">
                   <p className="text-lg leading-relaxed">
                     This calculator determines your postgraduate degree classification based on your module scores.
-                    Select your award type and enter your module details. Level 7 modules require 50% to pass, Level 6 modules require 40%.
+                    Select your award type and enter your module details (name, credits, and marks).
+                    The calculator computes a credit-weighted average to determine whether you achieve a Pass, Merit, or Distinction.
+                  </p>
+                  <p className="text-lg leading-relaxed">
+                    <strong>Passing Requirements:</strong> To earn credits for a module, you must achieve at least 50% for Level 7 modules (postgraduate level),
+                    or at least 40% for Level 6 modules (undergraduate level, where permitted).
+                    Only modules you have passed will count towards your total credits and final classification.
+                  </p>
+                  <p className="text-lg leading-relaxed">
+                    <strong>Classification Boundaries:</strong> Distinction: 70%+, Merit: 60-69%, Pass: 50-59%.
+                    For Integrated Masters, you must pass all modules at first attempt to be eligible for Merit or Distinction.
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Developed by Anne-Gaelle Colom, University of Westminster
