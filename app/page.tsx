@@ -308,10 +308,11 @@ export default function Home() {
       `Used ${usedLevel5Exclusion ? 'Level 5' : 'Level 6'} exclusion method (better result)`,
       `Provisional Score 1 (exclude L5): ${provisional1.indicatorScore}%`,
       `Provisional Score 2 (exclude L6): ${provisional2.indicatorScore}%`,
-      bestResult.excludedModuleName ? `\nNote: ${bestResult.excludedCredits < (level5LowestModules[0]?.credits || level6LowestModules[0]?.credits || 0) 
-        ? `${bestResult.excludedCredits} credits from the ${bestResult.excludedModuleName} (${bestResult.excludedModuleMark}%) are not included` 
+      bestResult.excludedModuleName ? `\nNote: ${bestResult.excludedCredits < (level5LowestModules[0]?.credits || level6LowestModules[0]?.credits || 0)
+        ? `${bestResult.excludedCredits} credits from the ${bestResult.excludedModuleName} (${bestResult.excludedModuleMark}%) are not included`
         : `The ${bestResult.excludedModuleName} (${bestResult.excludedModuleMark}%) is not included`
-      } in the best 220 credits used for your classification.` : ''
+      } in the best 220 credits used for your classification.` : '',
+      `\nReminder: This assumes you have passed Level 4 (Year 1) with at least 120 credits at 40% or higher.`
     ].join('\n');
 
     setResult(resultMessage);
@@ -528,9 +529,12 @@ export default function Home() {
               <AccordionContent>
                 <div className="space-y-4">
                   <p className="text-lg leading-relaxed">
-                    Enter your module details for Level 5 and Level 6.
-                    You need at least 240 credits in total, with a minimum of 120 credits at Level 6.
+                    Enter your module details for Level 5 (Year 2) and Level 6 (Year 3).
+                    You need at least 120 credits at Level 5 and at least 120 credits at Level 6.
                     The calculator will determine the best 220 credits by calculating two provisional scores: one excluding the lowest Level 5 module, and one excluding the lowest Level 6 module. The higher score becomes your final classification, with Level 5 weighted one-third and Level 6 weighted two-thirds.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Important:</strong> This calculator assumes you have already passed Level 4 (Year 1) with at least 120 credits at 40% or higher. Level 4 results do not count towards your final degree classification.
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Developed by Anne-Gaelle Colom, University of Westminster
