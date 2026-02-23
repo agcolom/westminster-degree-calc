@@ -131,8 +131,10 @@ const createInitialModules = (awardType: AwardTypeKey): Module[] => {
     let numModules = 3; // Default for PgCert (60 credits)
     if (awardType === 'pgdip') {
       numModules = 6; // 120 credits
-    } else if (awardType === 'masters' || awardType === 'mres') {
+    } else if (awardType === 'masters') {
       numModules = 7; // 180 credits (typically includes large project)
+    } else if (awardType === 'mres') {
+      numModules = 5; // 180 credits (research-focused with large dissertation)
     } else if (awardType === 'mfa') {
       numModules = 6; // 240 credits (includes large portfolio/practice modules)
     } else if (awardType === 'erasmus') {
