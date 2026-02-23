@@ -331,15 +331,14 @@ export default function PostgraduatePage() {
       resultMessage += `\n`;
       if (allPassed) {
         resultMessage += `Classification: ${classification}\n`;
-        resultMessage += `\nNote: You passed all modules at first attempt.`;
+        resultMessage += `\nNote: This assumes all modules were passed at first attempt.`;
       } else {
-        resultMessage += `Classification: ${classification}\n`;
-        resultMessage += `\nNote: You did not pass all modules at first attempt.\n`;
-        resultMessage += `If you had passed all modules at first attempt, your classification would have been: ${classificationWithoutFirstAttempt}`;
+        resultMessage += `If you passed all modules at first attempt: ${classificationWithoutFirstAttempt}\n`;
+        resultMessage += `If you did not pass all modules at first attempt: ${classification}`;
       }
       resultMessage += `\n\nDetails:\n`;
-      resultMessage += `Level 6 Average: ${level6Credits > 0 ? (level6Modules.reduce((sum, m) => sum + (m.mark * m.credits), 0) / level6Credits).toFixed(2) : 0}%\n`;
-      resultMessage += `Level 7 Average: ${level7Credits > 0 ? (level7Modules.reduce((sum, m) => sum + (m.mark * m.credits), 0) / level7Credits).toFixed(2) : 0}%\n`;
+      resultMessage += `Level 6 Average: ${level6Credits > 0 ? (level6Passing.reduce((sum, m) => sum + (m.mark * m.credits), 0) / level6Credits).toFixed(2) : 0}%\n`;
+      resultMessage += `Level 7 Average: ${level7Credits > 0 ? (level7Passing.reduce((sum, m) => sum + (m.mark * m.credits), 0) / level7Credits).toFixed(2) : 0}%\n`;
       resultMessage += `Level 6 Credits: ${level6Credits}\n`;
       resultMessage += `Level 7 Credits: ${level7Credits}`;
     } else {
