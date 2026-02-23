@@ -146,9 +146,9 @@ export default function Home() {
     const level6Credits = level6Modules.reduce((sum, m) => sum + m.credits, 0);
     const totalCredits = level5Credits + level6Credits;
 
-    // Validate credit requirements
-    if (totalCredits < 240) {
-      setError(`Insufficient passing credits (${totalCredits}/240). You need 240 credits with marks of 40% or higher.`);
+    // Validate credit requirements - must have at least 120 at each level
+    if (level5Credits < 120) {
+      setError(`Insufficient passing Level 5 credits (${level5Credits}/120). You need at least 120 credits at Level 5 with marks of 40% or higher.`);
       return;
     }
     if (level6Credits < 120) {
@@ -379,17 +379,17 @@ export default function Home() {
   };
 
   const renderCreditTotal = (level: "level5" | "level6") => {
-    const validModules = modules[level].filter(module => 
+    const validModules = modules[level].filter(module =>
       module.credits !== "" && !isNaN(Number(module.credits)) &&
       module.mark !== "" && !isNaN(Number(module.mark)) && Number(module.mark) >= 40
     );
     const totalCredits = validModules.reduce((sum, m) => sum + Number(m.credits), 0);
-    const requiredCredits = level === "level6" ? 120 : "any";
-    const isValid = level === "level6" ? totalCredits >= 120 : true;
+    const requiredCredits = 120;
+    const isValid = totalCredits >= 120;
 
     return (
       <div className={`text-sm font-medium ${isValid ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-        Total Credits: {totalCredits} {requiredCredits !== "any" && `/ ${requiredCredits}`}
+        Total Credits: {totalCredits} / {requiredCredits}
         {totalCredits > 0 && <span className="text-xs ml-1">(passing modules only)</span>}
       </div>
     );
