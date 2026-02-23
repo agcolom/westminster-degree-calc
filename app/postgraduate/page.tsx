@@ -334,7 +334,7 @@ export default function PostgraduatePage() {
         resultMessage += `\nNote: This assumes all modules were passed at first attempt.`;
       } else {
         resultMessage += `If you passed all modules at first attempt: ${classificationWithoutFirstAttempt}\n`;
-        resultMessage += `If you did not pass all modules at first attempt: ${classification}`;
+        resultMessage += `If you did not pass all modules at first attempt: Pass only (regardless of average)`;
       }
       resultMessage += `\n\nDetails:\n`;
       resultMessage += `Level 6 Average: ${level6Credits > 0 ? (level6Passing.reduce((sum, m) => sum + (m.mark * m.credits), 0) / level6Credits).toFixed(2) : 0}%\n`;
