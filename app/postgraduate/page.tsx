@@ -110,7 +110,7 @@ const getGradeTextColor = (mark: number) => {
 const createInitialModules = (awardType: AwardTypeKey): Module[] => {
   const award = awardTypes[awardType];
   if (award.integrated) {
-    // For integrated masters, create 6 modules for each level
+    // For integrated masters, create 6 modules for each level (120 credits each)
     const level6Modules = Array(6).fill(null).map((_, index) => ({
       name: "",
       credits: "20",
@@ -127,8 +127,9 @@ const createInitialModules = (awardType: AwardTypeKey): Module[] => {
     }));
     return [...level6Modules, ...level7Modules];
   } else {
-    // For other awards, create initial Level 7 modules
-    return Array(6).fill(null).map((_, index) => ({
+    // Calculate number of modules based on minimum credits (assuming 20 credits per module)
+    const numModules = Math.ceil(award.minCredits / 20);
+    return Array(numModules).fill(null).map((_, index) => ({
       name: "",
       credits: "20",
       mark: "0",
