@@ -342,25 +342,26 @@ export default function Home() {
         // Schedule the validation and calculation to run after state update
         setTimeout(() => {
           // Get valid modules with the updated state
-          const validModules = Object.values(newModules).flat().filter(module => 
-            module.mark !== "" && !isNaN(Number(module.mark)) && 
+          const level5Modules = newModules.level5.filter(module =>
+            module.mark !== "" && !isNaN(Number(module.mark)) &&
             module.credits !== "" && !isNaN(Number(module.credits)) &&
             Number(module.mark) >= 40
           );
-          const totalCredits = validModules.reduce((sum, m) => sum + Number(m.credits), 0);
-          
-          // Calculate level 6 credits
-          const level6Modules = newModules.level6.filter(module => 
-            module.mark !== "" && !isNaN(Number(module.mark)) && 
+          const level6Modules = newModules.level6.filter(module =>
+            module.mark !== "" && !isNaN(Number(module.mark)) &&
             module.credits !== "" && !isNaN(Number(module.credits)) &&
             Number(module.mark) >= 40
           );
+          const level5Credits = level5Modules.reduce((sum, m) => sum + Number(m.credits), 0);
           const level6Credits = level6Modules.reduce((sum, m) => sum + Number(m.credits), 0);
 
           // Update error message if needed
-          if (totalCredits < 240) {
-            setError(`Insufficient passing credits (${totalCredits}/240). You need 240 credits with marks of 40% or higher.`);
+          if (level5Credits < 120 && level6Credits < 120) {
+            setError(`Insufficient passing credits. Level 5: ${level5Credits}/120, Level 6: ${level6Credits}/120. You need at least 120 credits at each level with marks of 40% or higher.`);
             setResult(""); // Clear any previous result when credits are insufficient
+          } else if (level5Credits < 120) {
+            setError(`Insufficient passing Level 5 credits (${level5Credits}/120). You need at least 120 credits at Level 5 with marks of 40% or higher.`);
+            setResult(""); // Clear any previous result when Level 5 credits are insufficient
           } else if (level6Credits < 120) {
             setError(`Insufficient passing Level 6 credits (${level6Credits}/120). You need at least 120 credits at Level 6 with marks of 40% or higher.`);
             setResult(""); // Clear any previous result when Level 6 credits are insufficient
