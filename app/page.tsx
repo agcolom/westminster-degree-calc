@@ -37,17 +37,20 @@ const createInitialModules = (level: string, count: number): Module[] =>
   }));
 
 const getMarkColor = (mark: number) => {
-  // 0-40: red to yellow (hue 0 to 60)
+  // 0-30: red to orange (hue 0 to 37.5) - bright orange at 30%
+  // 30-40: orange to yellow (hue 37.5 to 60)
   // 40-50: yellow (hue 60)
   // 50-70: yellow to green (hue 60 to 120)
   // 70-100: green to blue (hue 120 to 240)
-  const hue = mark <= 40
-    ? mark * 1.5  // 0-40 maps to 0-60 (red to yellow)
-    : mark <= 50
-      ? 60  // 40-50 stays at yellow
-      : mark <= 70
-        ? 60 + ((mark - 50) * 3)  // 50-70 maps to 60-120 (yellow to green)
-        : 120 + ((mark - 70) * 4);  // 70-100 maps to 120-240 (green to blue)
+  const hue = mark <= 30
+    ? mark * 1.25  // 0-30 maps to 0-37.5 (red to orange)
+    : mark <= 40
+      ? 37.5 + ((mark - 30) * 2.25)  // 30-40 maps to 37.5-60 (orange to yellow)
+      : mark <= 50
+        ? 60  // 40-50 stays at yellow
+        : mark <= 70
+          ? 60 + ((mark - 50) * 3)  // 50-70 maps to 60-120 (yellow to green)
+          : 120 + ((mark - 70) * 4);  // 70-100 maps to 120-240 (green to blue)
   const saturation = 85;  // High saturation everywhere
   const lightness = 65;
   return `border-[hsl(${hue}_${saturation}%_${lightness}%)]`;
@@ -496,13 +499,15 @@ export default function Home() {
                       }
                     }}
                     className="[&_[role=slider]]:!bg-white dark:[&_[role=slider]]:!bg-slate-50 [&_.absolute.h-full]:!bg-current"
-                    style={{ color: `hsl(${mark <= 40
-                      ? mark * 1.5
-                      : mark <= 50
-                        ? 60
-                        : mark <= 70
-                          ? 60 + ((mark - 50) * 3)
-                          : 120 + ((mark - 70) * 4)
+                    style={{ color: `hsl(${mark <= 30
+                      ? mark * 1.25
+                      : mark <= 40
+                        ? 37.5 + ((mark - 30) * 2.25)
+                        : mark <= 50
+                          ? 60
+                          : mark <= 70
+                            ? 60 + ((mark - 50) * 3)
+                            : 120 + ((mark - 70) * 4)
                     } 90% 45%)` }}
                   />
                 </div>
