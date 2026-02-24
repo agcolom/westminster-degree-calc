@@ -86,15 +86,18 @@ type AwardTypeKey = keyof typeof awardTypes;
 const getMarkColor = (mark: number) => {
   // 0-40: red to orange (hue 0 to 37.5) - bright orange at 40%
   // 40-50: orange to yellow (hue 37.5 to 60)
-  // 50-70: yellow to green (hue 60 to 120)
+  // 50-55: yellow (hue 60)
+  // 55-70: yellow to green (hue 60 to 120)
   // 70-100: green to blue (hue 120 to 240)
   const hue = mark <= 40
     ? mark * 0.9375  // 0-40 maps to 0-37.5 (red to orange)
     : mark <= 50
       ? 37.5 + ((mark - 40) * 2.25)  // 40-50 maps to 37.5-60 (orange to yellow)
-      : mark <= 70
-        ? 60 + ((mark - 50) * 3)  // 50-70 maps to 60-120 (yellow to green)
-        : 120 + ((mark - 70) * 4);  // 70-100 maps to 120-240 (green to blue)
+      : mark <= 55
+        ? 60  // 50-55 stays at yellow
+        : mark <= 70
+          ? 60 + ((mark - 55) * 4)  // 55-70 maps to 60-120 (yellow to green)
+          : 120 + ((mark - 70) * 4);  // 70-100 maps to 120-240 (green to blue)
   const saturation = 85;
   const lightness = 65;
   return `border-[hsl(${hue}_${saturation}%_${lightness}%)]`;
@@ -105,9 +108,11 @@ const getGradeTextColor = (mark: number) => {
     ? mark * 0.9375
     : mark <= 50
       ? 37.5 + ((mark - 40) * 2.25)
-      : mark <= 70
-        ? 60 + ((mark - 50) * 3)
-        : 120 + ((mark - 70) * 4);
+      : mark <= 55
+        ? 60
+        : mark <= 70
+          ? 60 + ((mark - 55) * 4)
+          : 120 + ((mark - 70) * 4);
   return `text-[hsl(${hue}_50%_35%)] dark:text-[hsl(${hue}_40%_65%)]`;
 };
 
@@ -515,9 +520,11 @@ export default function PostgraduatePage() {
               ? mark * 0.9375
               : mark <= 50
                 ? 37.5 + ((mark - 40) * 2.25)
-                : mark <= 70
-                  ? 60 + ((mark - 50) * 3)
-                  : 120 + ((mark - 70) * 4)
+                : mark <= 55
+                  ? 60
+                  : mark <= 70
+                    ? 60 + ((mark - 55) * 4)
+                    : 120 + ((mark - 70) * 4)
             } 90% 45%)` }}
           />
         </div>
