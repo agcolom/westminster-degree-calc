@@ -500,6 +500,12 @@ export default function PostgraduatePage() {
             step={0.1}
             value={[mark]}
             onValueChange={(value) => handleModuleChange(index, "mark", value[0].toString())}
+            onValueCommit={(value) => {
+              // Recalculate when slider is released to ensure final value is used
+              if (result || error) {
+                setTimeout(() => calculateDegree(), 0);
+              }
+            }}
             className="[&_[role=slider]]:!bg-white dark:[&_[role=slider]]:!bg-slate-50 [&_.absolute.h-full]:!bg-current"
             style={{ color: `hsl(${mark <= 40
               ? mark * 1.5
