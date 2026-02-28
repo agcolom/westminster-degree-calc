@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -567,14 +568,21 @@ export default function PostgraduatePage() {
   return (
     <main className="min-h-screen p-4 md:p-8 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-200 transition-colors" suppressHydrationWarning>
       <Card className="max-w-7xl mx-auto relative shadow-lg bg-white dark:bg-slate-900" suppressHydrationWarning>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-4 top-4 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
-          onClick={toggleTheme}
-        >
-          {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-        </Button>
+        <div className="absolute right-4 top-4 flex gap-2">
+          <Link href="/">
+            <Button variant="outline" size="sm">
+              ← Undergraduate Calculator
+            </Button>
+          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+            onClick={toggleTheme}
+          >
+            {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+          </Button>
+        </div>
         <CardHeader>
           <CardTitle className="text-4xl font-bold tracking-tight">Postgraduate Degree Calculator</CardTitle>
           <Accordion type="single" collapsible className="w-full">

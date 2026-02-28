@@ -2,17 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const { inlineSource } = require('inline-source');
 
-async function processHTML() {
-  const outDir = path.join(__dirname, 'out');
-  const htmlPath = path.join(outDir, 'index.html');
-  const outputPath = path.join(outDir, 'ugStandalone.html');
-
-  // Create .nojekyll file for GitHub Pages to serve _next directory
-  fs.writeFileSync(path.join(outDir, '.nojekyll'), '');
-  console.log('Created .nojekyll file for GitHub Pages');
-
+async function processHTMLFile(inputFile, outputFile, outDir) {
   try {
-    let html = fs.readFileSync(htmlPath, 'utf8');
+    let html = fs.readFileSync(path.join(outDir, inputFile), 'utf8');
 
     // Remove basePath from all asset URLs for standalone version
     html = html.replace(/\/westminster-degree-calc\/_next/g, '_next');
@@ -44,11 +36,23 @@ async function processHTML() {
       attribute: 'inline',
     });
 
-    fs.writeFileSync(outputPath, result);
-    console.log('Successfully created ugStandalone.html');
+    fs.writeFileSync(path.join(outDir, outputFile), result);
+    console.log(`Successfully created ${outputFile}`);
   } catch (err) {
-    console.error('Error processing HTML:', err);
+    console.error(`Error processing ${inputFile}:`, err);
   }
+}
+
+async function processHTML() {
+  const outDir = path.join(__dirname, 'out');
+
+  // Create .nojekyll file for GitHub Pages to serve _next directory
+  fs.writeFileSync(path.join(outDir, '.nojekyll'), '');
+  console.log('Created .nojekyll file for GitHub Pages');
+
+  // Process both UG and PG calculators
+  await processHTMLFile('index.html', 'ugStandalone.html', outDir);
+  await processHTMLFile('postgraduate.html', 'pgStandalone.html', outDir);
 }
 
 processHTML(); 
