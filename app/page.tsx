@@ -575,21 +575,14 @@ export default function Home() {
   return (
     <main className="min-h-screen p-4 md:p-8 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-200 transition-colors" suppressHydrationWarning>
       <Card className="max-w-7xl mx-auto relative shadow-lg bg-white dark:bg-slate-900" suppressHydrationWarning>
-        <div className="absolute right-4 top-4 flex gap-2">
-          <Link href="/postgraduate">
-            <Button variant="outline" size="sm" className="text-xs sm:text-sm">
-              <span className="hidden xs:inline">Postgraduate </span>PG →
-            </Button>
-          </Link>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
-            onClick={toggleTheme}
-          >
-            {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-4 top-4 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+          onClick={toggleTheme}
+        >
+          {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+        </Button>
         <CardHeader>
           <CardTitle className="text-4xl font-bold tracking-tight">Undergraduate Degree Calculator</CardTitle>
           <Accordion type="single" collapsible className="w-full">
@@ -604,6 +597,9 @@ export default function Home() {
                   </p>
                   <p className="text-sm text-muted-foreground">
                     <strong>Important:</strong> This calculator assumes you have already passed Level 4 (Year 1) with at least 120 credits at 40% or higher. Level 4 results do not count towards your final degree classification.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Looking for the postgraduate calculator? <Link href="/postgraduate" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">Click here for the Postgraduate Degree Calculator →</Link>
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Developed by Anne-Gaelle Colom, University of Westminster

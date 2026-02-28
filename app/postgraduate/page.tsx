@@ -595,21 +595,14 @@ export default function PostgraduatePage() {
   return (
     <main className="min-h-screen p-4 md:p-8 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-200 transition-colors" suppressHydrationWarning>
       <Card className="max-w-7xl mx-auto relative shadow-lg bg-white dark:bg-slate-900" suppressHydrationWarning>
-        <div className="absolute right-4 top-4 flex gap-2">
-          <Link href="/">
-            <Button variant="outline" size="sm" className="text-xs sm:text-sm">
-              ← UG <span className="hidden xs:inline">Undergraduate</span>
-            </Button>
-          </Link>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
-            onClick={toggleTheme}
-          >
-            {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-4 top-4 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+          onClick={toggleTheme}
+        >
+          {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+        </Button>
         <CardHeader>
           <CardTitle className="text-4xl font-bold tracking-tight">Postgraduate Degree Calculator</CardTitle>
           <Accordion type="single" collapsible className="w-full">
@@ -630,6 +623,9 @@ export default function PostgraduatePage() {
                   <p className="text-lg leading-relaxed">
                     <strong>Classification Boundaries:</strong> Distinction: 70%+, Merit: 60-69%, Pass: 50-59%.
                     For Integrated Masters, you must pass all modules at first attempt to be eligible for Merit or Distinction.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Looking for the undergraduate calculator? <Link href="/" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">Click here for the Undergraduate Degree Calculator →</Link>
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Developed by Anne-Gaelle Colom, University of Westminster
