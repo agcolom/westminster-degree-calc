@@ -597,8 +597,8 @@ export default function PostgraduatePage() {
       <Card className="max-w-7xl mx-auto relative shadow-lg bg-white dark:bg-slate-900" suppressHydrationWarning>
         <div className="absolute right-4 top-4 flex gap-2">
           <Link href="/">
-            <Button variant="outline" size="sm">
-              ← Undergraduate Calculator
+            <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+              ← UG <span className="hidden xs:inline">Undergraduate</span>
             </Button>
           </Link>
           <Button

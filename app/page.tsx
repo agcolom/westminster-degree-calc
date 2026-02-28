@@ -577,8 +577,8 @@ export default function Home() {
       <Card className="max-w-7xl mx-auto relative shadow-lg bg-white dark:bg-slate-900" suppressHydrationWarning>
         <div className="absolute right-4 top-4 flex gap-2">
           <Link href="/postgraduate">
-            <Button variant="outline" size="sm">
-              Postgraduate Calculator →
+            <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+              <span className="hidden xs:inline">Postgraduate </span>PG →
             </Button>
           </Link>
           <Button
