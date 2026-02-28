@@ -457,6 +457,12 @@ export default function PostgraduatePage() {
                 step="20"
                 value={module.credits}
                 onChange={(e) => handleModuleChange(index, "credits", e.target.value)}
+                onBlur={() => {
+                  // Recalculate when field loses focus to ensure final value is used
+                  if (result || error) {
+                    setTimeout(() => calculateDegree(), 0);
+                  }
+                }}
                 placeholder="20"
                 className={`h-8 w-16 ${markColor}`}
               />
@@ -488,6 +494,12 @@ export default function PostgraduatePage() {
                 step="0.1"
                 value={module.mark}
                 onChange={(e) => handleModuleChange(index, "mark", e.target.value)}
+                onBlur={() => {
+                  // Recalculate when field loses focus to ensure final value is used
+                  if (result || error) {
+                    setTimeout(() => calculateDegree(), 0);
+                  }
+                }}
                 className={`w-20 h-8 text-sm ${markColor}`}
               />
             </div>
