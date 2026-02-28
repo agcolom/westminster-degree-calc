@@ -323,6 +323,14 @@ export default function Home() {
     ].join('\n');
 
     setResult(resultMessage);
+
+    // Track calculation event in Google Analytics
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'calculate_degree', {
+        calculator_type: 'undergraduate',
+        classification: classification
+      });
+    }
   };
 
   const handleModuleChange = (

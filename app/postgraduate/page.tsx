@@ -369,6 +369,15 @@ export default function PostgraduatePage() {
     }
 
     setResult(resultMessage);
+
+    // Track calculation event in Google Analytics
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'calculate_degree', {
+        calculator_type: 'postgraduate',
+        award_type: selectedAward,
+        classification: classification
+      });
+    }
   };
 
   const handleReset = () => {
