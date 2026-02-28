@@ -177,12 +177,7 @@ export default function PostgraduatePage() {
     }
   }, []);
 
-  // Update modules when award type changes
-  useEffect(() => {
-    setModules(createInitialModules(selectedAward));
-    setResult("");
-    setError("");
-  }, [selectedAward]);
+  // Removed automatic module reset on award change to allow proper Load functionality
 
   const toggleTheme = () => {
     setTheme(current => {
@@ -382,7 +377,7 @@ export default function PostgraduatePage() {
   };
 
   const handleReset = () => {
-    setModules([{ name: "", credits: "20", mark: "0", level: "7", id: "module-1" }]);
+    setModules(createInitialModules(selectedAward));
     setResult("");
     setError("");
   };
@@ -639,7 +634,13 @@ export default function PostgraduatePage() {
           <div className="space-y-8">
             <div className="space-y-2">
               <Label htmlFor="award-type" className="text-lg font-semibold">Award Type</Label>
-              <Select value={selectedAward} onValueChange={(value) => setSelectedAward(value as AwardTypeKey)}>
+              <Select value={selectedAward} onValueChange={(value) => {
+                const newAward = value as AwardTypeKey;
+                setSelectedAward(newAward);
+                setModules(createInitialModules(newAward));
+                setResult("");
+                setError("");
+              }}>
                 <SelectTrigger id="award-type" className="w-full">
                   <SelectValue />
                 </SelectTrigger>
