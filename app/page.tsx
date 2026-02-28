@@ -396,6 +396,31 @@ export default function Home() {
     setError("");
   };
 
+  const handleSave = () => {
+    try {
+      localStorage.setItem('ugModules', JSON.stringify(modules));
+      alert('Your modules have been saved!');
+    } catch (err) {
+      alert('Failed to save modules. Please try again.');
+    }
+  };
+
+  const handleLoad = () => {
+    try {
+      const saved = localStorage.getItem('ugModules');
+      if (saved) {
+        setModules(JSON.parse(saved));
+        setResult("");
+        setError("");
+        alert('Your saved modules have been loaded!');
+      } else {
+        alert('No saved modules found.');
+      }
+    } catch (err) {
+      alert('Failed to load modules. Please try again.');
+    }
+  };
+
   const renderCreditTotal = (level: "level5" | "level6") => {
     const validModules = modules[level].filter(module =>
       module.credits !== "" && !isNaN(Number(module.credits)) &&
@@ -595,23 +620,43 @@ export default function Home() {
               {renderModuleInputs("level6", "Level 6 Modules")}
             </div>
 
-            <div className="flex justify-center gap-4">
-              <Button 
-                onClick={calculateDegree} 
-                className="w-full max-w-xs text-lg font-semibold"
-                variant="outline"
-                size="lg"
-              >
-                Calculate Classification
-              </Button>
-              <Button 
-                onClick={handleReset} 
-                className="w-full max-w-xs text-lg font-semibold"
-                variant="outline"
-                size="lg"
-              >
-                Reset All
-              </Button>
+            <div className="space-y-3">
+              <div className="flex justify-center gap-4">
+                <Button
+                  onClick={calculateDegree}
+                  className="w-full max-w-xs text-lg font-semibold"
+                  variant="outline"
+                  size="lg"
+                >
+                  Calculate Classification
+                </Button>
+                <Button
+                  onClick={handleReset}
+                  className="w-full max-w-xs text-lg font-semibold"
+                  variant="outline"
+                  size="lg"
+                >
+                  Reset All
+                </Button>
+              </div>
+              <div className="flex justify-center gap-4">
+                <Button
+                  onClick={handleSave}
+                  className="w-full max-w-xs"
+                  variant="secondary"
+                  size="sm"
+                >
+                  Save Progress
+                </Button>
+                <Button
+                  onClick={handleLoad}
+                  className="w-full max-w-xs"
+                  variant="secondary"
+                  size="sm"
+                >
+                  Load Saved
+                </Button>
+              </div>
             </div>
 
             {error && (
@@ -621,14 +666,26 @@ export default function Home() {
             )}
 
             {result && !error && (
-              <div className={`mt-4 p-4 rounded-lg text-center font-medium whitespace-pre-line ${
-                result.includes("First Class") ? "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" :
-                result.includes("Upper Division") ? "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400" :
-                result.includes("Lower Division") ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400" :
-                result.includes("Third Class") ? "bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400" :
-                "bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400"
-              }`}>
-                {result}
+              <div className="mt-4 space-y-3">
+                <div className={`p-4 rounded-lg text-center font-medium whitespace-pre-line ${
+                  result.includes("First Class") ? "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" :
+                  result.includes("Upper Division") ? "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400" :
+                  result.includes("Lower Division") ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400" :
+                  result.includes("Third Class") ? "bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400" :
+                  "bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+                }`}>
+                  {result}
+                </div>
+                <div className="flex justify-center">
+                  <Button
+                    onClick={() => window.print()}
+                    variant="outline"
+                    size="sm"
+                    className="print:hidden"
+                  >
+                    Print / Save as PDF
+                  </Button>
+                </div>
               </div>
             )}
           </div>

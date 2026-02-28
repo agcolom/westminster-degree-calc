@@ -387,6 +387,33 @@ export default function PostgraduatePage() {
     setError("");
   };
 
+  const handleSave = () => {
+    try {
+      localStorage.setItem('pgModules', JSON.stringify({ modules, selectedAward }));
+      alert('Your modules have been saved!');
+    } catch (err) {
+      alert('Failed to save modules. Please try again.');
+    }
+  };
+
+  const handleLoad = () => {
+    try {
+      const saved = localStorage.getItem('pgModules');
+      if (saved) {
+        const data = JSON.parse(saved);
+        setModules(data.modules);
+        setSelectedAward(data.selectedAward);
+        setResult("");
+        setError("");
+        alert('Your saved modules have been loaded!');
+      } else {
+        alert('No saved modules found.');
+      }
+    } catch (err) {
+      alert('Failed to load modules. Please try again.');
+    }
+  };
+
   const renderCreditTotal = (level?: string) => {
     const award = awardTypes[selectedAward];
     let filteredModules = modules;
@@ -693,23 +720,43 @@ export default function PostgraduatePage() {
               </div>
             )}
 
-            <div className="flex justify-center gap-4">
-              <Button
-                onClick={calculateDegree}
-                className="w-full max-w-xs text-lg font-semibold"
-                variant="outline"
-                size="lg"
-              >
-                Calculate Classification
-              </Button>
-              <Button
-                onClick={handleReset}
-                className="w-full max-w-xs text-lg font-semibold"
-                variant="outline"
-                size="lg"
-              >
-                Reset All
-              </Button>
+            <div className="space-y-3">
+              <div className="flex justify-center gap-4">
+                <Button
+                  onClick={calculateDegree}
+                  className="w-full max-w-xs text-lg font-semibold"
+                  variant="outline"
+                  size="lg"
+                >
+                  Calculate Classification
+                </Button>
+                <Button
+                  onClick={handleReset}
+                  className="w-full max-w-xs text-lg font-semibold"
+                  variant="outline"
+                  size="lg"
+                >
+                  Reset All
+                </Button>
+              </div>
+              <div className="flex justify-center gap-4">
+                <Button
+                  onClick={handleSave}
+                  className="w-full max-w-xs"
+                  variant="secondary"
+                  size="sm"
+                >
+                  Save Progress
+                </Button>
+                <Button
+                  onClick={handleLoad}
+                  className="w-full max-w-xs"
+                  variant="secondary"
+                  size="sm"
+                >
+                  Load Saved
+                </Button>
+              </div>
             </div>
 
             {error && (
@@ -719,13 +766,25 @@ export default function PostgraduatePage() {
             )}
 
             {result && !error && (
-              <div className={`mt-4 p-4 rounded-lg text-center font-medium whitespace-pre-line ${
-                result.includes("Distinction") ? "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" :
-                result.includes("Merit") ? "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400" :
-                result.includes("Pass") ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400" :
-                "bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400"
-              }`}>
-                {result}
+              <div className="mt-4 space-y-3">
+                <div className={`p-4 rounded-lg text-center font-medium whitespace-pre-line ${
+                  result.includes("Distinction") ? "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" :
+                  result.includes("Merit") ? "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400" :
+                  result.includes("Pass") ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400" :
+                  "bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+                }`}>
+                  {result}
+                </div>
+                <div className="flex justify-center">
+                  <Button
+                    onClick={() => window.print()}
+                    variant="outline"
+                    size="sm"
+                    className="print:hidden"
+                  >
+                    Print / Save as PDF
+                  </Button>
+                </div>
               </div>
             )}
           </div>
