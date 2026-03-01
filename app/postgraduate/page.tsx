@@ -607,7 +607,7 @@ export default function PostgraduatePage() {
                 <div className="space-y-4">
                   <p className="text-lg leading-relaxed">
                     Use this tool to get a helpful estimate of the postgraduate award you might achieve by the end of your course, based on the marks you have so far.
-                    If you're missing any marks, you can simply enter what you expect to get. Please note that this provides an estimate only and should not be taken as a definitive prediction of your final classification.
+                    If you&apos;re missing any marks, you can simply enter what you expect to get. Please note that this provides an estimate only and should not be taken as a definitive prediction of your final classification.
                   </p>
                   <p className="text-lg leading-relaxed">
                     <strong>Passing Requirements:</strong> To earn credits for a module, you must achieve at least 50% for Level 7 modules (postgraduate level),
@@ -625,10 +625,10 @@ export default function PostgraduatePage() {
                     <li>Select your award type from the dropdown (PgCert, PgDip, Masters, or Integrated Masters)</li>
                     <li>Enter your module names (optional), credits, marks, and levels</li>
                     <li>Use the sliders or type directly to adjust marks - the colours indicate your performance</li>
-                    <li>Click "Add Module" if you need to add more modules</li>
-                    <li>Click "Calculate Classification" to see your degree classification</li>
-                    <li>Use "Save My Marks" to save your progress and "Load My Marks" to restore it later</li>
-                    <li>Click "Reset All" to start over with empty modules</li>
+                    <li>Click &quot;Add Module&quot; if you need to add more modules</li>
+                    <li>Click &quot;Calculate Classification&quot; to see your degree classification</li>
+                    <li>Use &quot;Save My Marks&quot; to save your progress and &quot;Load My Marks&quot; to restore it later</li>
+                    <li>Click &quot;Reset All&quot; to start over with empty modules</li>
                   </ol>
                   <p className="text-lg leading-relaxed">
                     <strong>How It Works:</strong> The calculator computes a credit-weighted average of your passing modules to determine whether you achieve a Pass, Merit, or Distinction.

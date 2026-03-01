@@ -592,7 +592,7 @@ export default function Home() {
                 <div className="space-y-4">
                   <p className="text-lg leading-relaxed">
                     Use this tool to get a helpful estimate of the undergraduate award you might achieve by the end of your course, based on the marks you have so far.
-                    If you're missing any marks, you can simply enter what you expect to get. Please note that this provides an estimate only and should not be taken as a definitive prediction of your final classification.
+                    If you&apos;re missing any marks, you can simply enter what you expect to get. Please note that this provides an estimate only and should not be taken as a definitive prediction of your final classification.
                   </p>
                   <p className="text-lg leading-relaxed">
                     <strong>Important:</strong> This calculator assumes you have already passed Level 4 (Year 1) with at least 120 credits at 40% or higher. Level 4 results do not count towards your final degree classification.
@@ -603,9 +603,9 @@ export default function Home() {
                   <ol className="text-lg leading-relaxed list-decimal list-inside space-y-2 ml-2">
                     <li>Enter your module names (optional), credits, and marks for Level 5 and Level 6</li>
                     <li>Use the sliders or type directly to adjust marks - the colours indicate your performance</li>
-                    <li>Click "Calculate Classification" to see your degree classification</li>
-                    <li>Use "Save My Marks" to save your progress and "Load My Marks" to restore it later</li>
-                    <li>Click "Reset All" to start over with empty modules</li>
+                    <li>Click &quot;Calculate Classification&quot; to see your degree classification</li>
+                    <li>Use &quot;Save My Marks&quot; to save your progress and &quot;Load My Marks&quot; to restore it later</li>
+                    <li>Click &quot;Reset All&quot; to start over with empty modules</li>
                   </ol>
                   <p className="text-lg leading-relaxed">
                     <strong>How It Works:</strong> You need at least 120 credits at Level 5 and at least 120 credits at Level 6.
