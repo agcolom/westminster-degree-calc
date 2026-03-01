@@ -385,7 +385,7 @@ export default function PostgraduatePage() {
   const handleSave = () => {
     try {
       localStorage.setItem('pgModules', JSON.stringify({ modules, selectedAward }));
-      alert('Your modules have been saved!');
+      alert('Your module marks have been saved!');
     } catch (err) {
       alert('Failed to save modules. Please try again.');
     }
@@ -400,9 +400,9 @@ export default function PostgraduatePage() {
         setSelectedAward(data.selectedAward);
         setResult("");
         setError("");
-        alert('Your saved modules have been loaded!');
+        alert('Your module marks have been loaded!');
       } else {
-        alert('No saved modules found.');
+        alert('No saved module marks found.');
       }
     } catch (err) {
       alert('Failed to load modules. Please try again.');
@@ -606,9 +606,8 @@ export default function PostgraduatePage() {
               <AccordionContent>
                 <div className="space-y-4">
                   <p className="text-lg leading-relaxed">
-                    This calculator determines your postgraduate degree classification based on your module scores.
-                    Select your award type and enter your module details (name, credits, and marks).
-                    The calculator computes a credit-weighted average to determine whether you achieve a Pass, Merit, or Distinction.
+                    Use this tool to get a helpful estimate of the postgraduate award you might achieve by the end of your course, based on the marks you have so far.
+                    If you're missing any marks, you can simply enter what you expect to get. Please note that this provides an estimate only and should not be taken as a definitive prediction of your final classification.
                   </p>
                   <p className="text-lg leading-relaxed">
                     <strong>Passing Requirements:</strong> To earn credits for a module, you must achieve at least 50% for Level 7 modules (postgraduate level),
@@ -619,11 +618,26 @@ export default function PostgraduatePage() {
                     <strong>Classification Boundaries:</strong> Distinction: 70%+, Merit: 60-69%, Pass: 50-59%.
                     For Integrated Masters, you must pass all modules at first attempt to be eligible for Merit or Distinction.
                   </p>
+                  <p className="text-lg leading-relaxed">
+                    <strong>How to Use:</strong>
+                  </p>
+                  <ol className="text-lg leading-relaxed list-decimal list-inside space-y-2 ml-2">
+                    <li>Select your award type from the dropdown (PgCert, PgDip, Masters, or Integrated Masters)</li>
+                    <li>Enter your module names (optional), credits, marks, and levels</li>
+                    <li>Use the sliders or type directly to adjust marks - the colours indicate your performance</li>
+                    <li>Click "Add Module" if you need to add more modules</li>
+                    <li>Click "Calculate Classification" to see your degree classification</li>
+                    <li>Use "Save My Marks" to save your progress and "Load My Marks" to restore it later</li>
+                    <li>Click "Reset All" to start over with empty modules</li>
+                  </ol>
+                  <p className="text-lg leading-relaxed">
+                    <strong>How It Works:</strong> The calculator computes a credit-weighted average of your passing modules to determine whether you achieve a Pass, Merit, or Distinction.
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     Looking for the undergraduate calculator? <Link href="/" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">Click here for the Undergraduate Degree Calculator →</Link>
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Developed by Anne-Gaelle Colom, University of Westminster
+                    Developed by Anne-Gaelle Colom, University of Westminster (2026)
                   </p>
                 </div>
               </AccordionContent>
@@ -740,18 +754,18 @@ export default function PostgraduatePage() {
                 <Button
                   onClick={handleSave}
                   className="w-full max-w-xs"
-                  variant="secondary"
-                  size="sm"
+                  variant="outline"
+                  size="default"
                 >
-                  Save Progress
+                  Save My Marks
                 </Button>
                 <Button
                   onClick={handleLoad}
                   className="w-full max-w-xs"
-                  variant="secondary"
-                  size="sm"
+                  variant="outline"
+                  size="default"
                 >
-                  Load Saved
+                  Load My Marks
                 </Button>
               </div>
             </div>

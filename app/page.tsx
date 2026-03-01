@@ -399,7 +399,7 @@ export default function Home() {
   const handleSave = () => {
     try {
       localStorage.setItem('ugModules', JSON.stringify(modules));
-      alert('Your modules have been saved!');
+      alert('Your module marks have been saved!');
     } catch (err) {
       alert('Failed to save modules. Please try again.');
     }
@@ -412,9 +412,9 @@ export default function Home() {
         setModules(JSON.parse(saved));
         setResult("");
         setError("");
-        alert('Your saved modules have been loaded!');
+        alert('Your module marks have been loaded!');
       } else {
-        alert('No saved modules found.');
+        alert('No saved module marks found.');
       }
     } catch (err) {
       alert('Failed to load modules. Please try again.');
@@ -591,18 +591,31 @@ export default function Home() {
               <AccordionContent>
                 <div className="space-y-4">
                   <p className="text-lg leading-relaxed">
-                    Enter your module details for Level 5 (Year 2) and Level 6 (Year 3).
-                    You need at least 120 credits at Level 5 and at least 120 credits at Level 6.
-                    The calculator will determine the best 220 credits by calculating two provisional scores: one excluding the lowest Level 5 module, and one excluding the lowest Level 6 module. The higher score becomes your final classification, with Level 5 weighted one-third and Level 6 weighted two-thirds.
+                    Use this tool to get a helpful estimate of the undergraduate award you might achieve by the end of your course, based on the marks you have so far.
+                    If you're missing any marks, you can simply enter what you expect to get. Please note that this provides an estimate only and should not be taken as a definitive prediction of your final classification.
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-lg leading-relaxed">
                     <strong>Important:</strong> This calculator assumes you have already passed Level 4 (Year 1) with at least 120 credits at 40% or higher. Level 4 results do not count towards your final degree classification.
+                  </p>
+                  <p className="text-lg leading-relaxed">
+                    <strong>How to Use:</strong>
+                  </p>
+                  <ol className="text-lg leading-relaxed list-decimal list-inside space-y-2 ml-2">
+                    <li>Enter your module names (optional), credits, and marks for Level 5 and Level 6</li>
+                    <li>Use the sliders or type directly to adjust marks - the colours indicate your performance</li>
+                    <li>Click "Calculate Classification" to see your degree classification</li>
+                    <li>Use "Save My Marks" to save your progress and "Load My Marks" to restore it later</li>
+                    <li>Click "Reset All" to start over with empty modules</li>
+                  </ol>
+                  <p className="text-lg leading-relaxed">
+                    <strong>How It Works:</strong> You need at least 120 credits at Level 5 and at least 120 credits at Level 6.
+                    The calculator determines the best 220 credits by calculating two provisional scores: one excluding the lowest Level 5 module, and one excluding the lowest Level 6 module. The higher score becomes your final classification, with Level 5 weighted one-third and Level 6 weighted two-thirds.
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Looking for the postgraduate calculator? <Link href="/postgraduate" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">Click here for the Postgraduate Degree Calculator →</Link>
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Developed by Anne-Gaelle Colom, University of Westminster
+                    Developed by Anne-Gaelle Colom, University of Westminster (2026)
                   </p>
                 </div>
               </AccordionContent>
@@ -639,18 +652,18 @@ export default function Home() {
                 <Button
                   onClick={handleSave}
                   className="w-full max-w-xs"
-                  variant="secondary"
-                  size="sm"
+                  variant="outline"
+                  size="default"
                 >
-                  Save Progress
+                  Save My Marks
                 </Button>
                 <Button
                   onClick={handleLoad}
                   className="w-full max-w-xs"
-                  variant="secondary"
-                  size="sm"
+                  variant="outline"
+                  size="default"
                 >
-                  Load Saved
+                  Load My Marks
                 </Button>
               </div>
             </div>
