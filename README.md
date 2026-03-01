@@ -1,18 +1,29 @@
 # University of Westminster Degree Classification Calculator
 
-A web-based calculator that helps students and staff understand how module scores translate into final degree classifications at the University of Westminster.
+A comprehensive web-based calculator that helps students and staff understand how module scores translate into final degree classifications at the University of Westminster, covering both undergraduate and postgraduate programmes.
 
 ## About
 
-This calculator implements the official University of Westminster degree classification rules, including the two provisional score system. It provides clear, immediate feedback on degree trajectory and helps students make informed decisions about their studies.
+This calculator implements the official University of Westminster degree classification rules for both undergraduate and postgraduate awards. It provides clear, immediate feedback on degree trajectory and helps students make informed decisions about their studies.
 
 ## Features
 
+### Core Functionality
+- **Undergraduate Calculator**: Implements the two provisional score system for Level 5 and Level 6 modules
+- **Postgraduate Calculator**: Supports PgCert, PgDip, Masters, and Integrated Masters programmes
 - **Accurate Classification**: Implements official University degree classification rules
-- **Two Provisional Scores**: Handles the complexity of the dual provisional score system automatically
-- **User-Friendly Interface**: Clean, intuitive design built with Next.js and Tailwind CSS
-- **Instant Feedback**: Real-time calculation as module scores are entered
-- **Accessible**: Works on desktop and mobile devices
+- **Save & Load Progress**: Browser-based storage allows students to save their module marks and return later
+- **Print & Export**: Export results to PDF for record-keeping
+
+### User Experience
+- **Color-Coded Sliders**: Visual feedback showing performance levels as marks are adjusted
+- **Real-Time Calculation**: Instant updates as module scores are entered or changed
+- **Mobile Optimized**: Fully responsive design works seamlessly on all devices
+- **Accessible Interface**: Clean, intuitive design built with modern UI components
+- **Standalone Files**: Self-contained HTML files available for offline use or alternative hosting
+
+### Analytics
+- **Google Analytics**: Track calculator usage to understand student engagement
 
 ## Who Is This For?
 
@@ -22,15 +33,25 @@ This calculator implements the official University of Westminster degree classif
 
 ## Usage
 
-Visit the live calculator at: [https://agcolom.github.io/westminster-degree-calc/](https://agcolom.github.io/westminster-degree-calc/)
+### Live Calculator
+Visit the calculator at: [https://agcolom.github.io/westminster-degree-calc/](https://agcolom.github.io/westminster-degree-calc/)
+
+- **Undergraduate**: [https://agcolom.github.io/westminster-degree-calc/](https://agcolom.github.io/westminster-degree-calc/)
+- **Postgraduate**: [https://agcolom.github.io/westminster-degree-calc/postgraduate](https://agcolom.github.io/westminster-degree-calc/postgraduate)
+
+### Standalone Versions
+Self-contained HTML files with all assets inlined:
+- **UG Standalone**: [ugStandalone.html](https://agcolom.github.io/westminster-degree-calc/ugStandalone.html)
+- **PG Standalone**: [pgStandalone.html](https://agcolom.github.io/westminster-degree-calc/pgStandalone.html)
 
 ## Technology Stack
 
-- [Next.js 15](https://nextjs.org/) - React framework
+- [Next.js 15](https://nextjs.org/) - React framework with App Router
 - [React 19](https://react.dev/) - UI library
-- [Tailwind CSS](https://tailwindcss.com/) - Styling
-- [shadcn/ui](https://ui.shadcn.com/) - UI components
 - [TypeScript](https://www.typescriptlang.org/) - Type safety
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first styling
+- [shadcn/ui](https://ui.shadcn.com/) - Accessible UI components
+- [Google Analytics 4](https://analytics.google.com/) - Usage tracking
 
 ## Development
 
@@ -61,38 +82,84 @@ Visit the live calculator at: [https://agcolom.github.io/westminster-degree-calc
 
 ### Building for Production
 
+Build the static site and generate standalone HTML files:
+
 ```bash
 npm run export
 ```
 
-This creates a static build in the `out/` directory, including a `standalone.html` file that can be hosted anywhere.
+This creates:
+- Static site in the `out/` directory
+- `ugStandalone.html` - Self-contained undergraduate calculator
+- `pgStandalone.html` - Self-contained postgraduate calculator
 
 ### Deployment
 
-Deploy to GitHub Pages:
+The site is deployed to GitHub Pages. To deploy manually:
 
-```bash
-./deploy.sh
-```
+1. Build the project:
+   ```bash
+   npm run export
+   ```
+
+2. Switch to gh-pages branch and copy the output:
+   ```bash
+   git checkout gh-pages
+   cp -r out/* .
+   ```
+
+3. Commit and push:
+   ```bash
+   git add .
+   git commit -m "Deploy updates"
+   git push origin gh-pages
+   ```
 
 ## Project Structure
 
 ```
 ├── app/
-│   ├── layout.tsx          # Root layout with metadata
-│   ├── page.tsx            # Main calculator page
-│   └── globals.css         # Global styles
+│   ├── layout.tsx              # Root layout with metadata and Google Analytics
+│   ├── page.tsx                # Undergraduate calculator
+│   ├── postgraduate/
+│   │   └── page.tsx            # Postgraduate calculator
+│   └── globals.css             # Global styles and Tailwind directives
 ├── components/
-│   └── ui/                 # shadcn/ui components
-├── public/                 # Static assets
-├── process-html.js         # Script to create standalone HTML
-├── deploy.sh               # Deployment script
-└── next.config.js          # Next.js configuration
+│   └── ui/                     # shadcn/ui components (Button, Card, Slider, etc.)
+├── lib/
+│   └── utils.ts                # Utility functions
+├── public/                     # Static assets (favicon, icons)
+├── process-html.js             # Script to create standalone HTML files
+├── next.config.ts              # Next.js configuration for static export
+└── package.json                # Dependencies and scripts
 ```
+
+## Key Implementation Details
+
+### Undergraduate Classification
+- Implements the two provisional score system
+- Level 5 weighted 1/3, Level 6 weighted 2/3
+- Automatically determines best 220 credits
+- Excludes lowest module from either level for each provisional score
+
+### Postgraduate Classification
+- Supports multiple award types with different credit requirements
+- Handles Level 6 and Level 7 modules with different passing thresholds
+- Special rules for Integrated Masters (first-attempt Pass requirement)
+- Credit-weighted average calculation
+
+### Save/Load Feature
+- Uses browser localStorage for client-side persistence
+- Saves module details and award type selection
+- No server required - completely private and local
 
 ## License
 
 MIT License - See [LICENSE](LICENSE) file for details
+
+## Developer
+
+Developed by Anne-Gaelle Colom, University of Westminster (2026)
 
 ## Contact
 
@@ -100,4 +167,4 @@ For questions or feedback about this calculator, please contact the University o
 
 ## Disclaimer
 
-This calculator is provided as a guide only. Official degree classifications are determined by the University's examination boards following the complete academic regulations. Always refer to official University documentation for authoritative information.
+This calculator is provided as a guide only and provides estimates based on the marks entered. Official degree classifications are determined by the University's examination boards following the complete academic regulations. Always refer to official University documentation for authoritative information.
