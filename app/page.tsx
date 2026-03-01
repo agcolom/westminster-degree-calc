@@ -620,7 +620,7 @@ export default function Home() {
               <div className="flex justify-center gap-4">
                 <Button
                   onClick={calculateDegree}
-                  className="w-full max-w-xs text-lg font-semibold"
+                  className="w-full max-w-xs text-sm sm:text-base md:text-lg font-semibold"
                   variant="outline"
                   size="lg"
                 >
@@ -628,7 +628,7 @@ export default function Home() {
                 </Button>
                 <Button
                   onClick={handleReset}
-                  className="w-full max-w-xs text-lg font-semibold"
+                  className="w-full max-w-xs text-sm sm:text-base md:text-lg font-semibold"
                   variant="outline"
                   size="lg"
                 >
