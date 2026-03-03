@@ -261,6 +261,16 @@ export default function PostgraduatePage() {
 
     const allPassed = level6Modules.length === level6Passing.length && level7Modules.length === level7Passing.length;
 
+    // MRes-specific validation: Must have a project module with at least 80 credits
+    if (selectedAward === 'mres') {
+      const allPassingModules = [...level6Passing, ...level7Passing];
+      const hasProjectModule = allPassingModules.some(m => m.credits >= 80);
+      if (!hasProjectModule) {
+        setError("MRes requires a project module with a minimum of 80 credits. Please ensure you have a project module with at least 80 credits and a passing mark (50%+ for Level 7, 40%+ for Level 6).");
+        return;
+      }
+    }
+
     // Validate credit requirements with better error messages
     if (award.integrated) {
       // For Integrated Masters, both levels have strict minimum requirements
