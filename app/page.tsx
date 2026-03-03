@@ -685,16 +685,6 @@ export default function Home() {
                 }`}>
                   {result}
                 </div>
-                <div className="flex justify-center">
-                  <Button
-                    onClick={() => window.print()}
-                    variant="outline"
-                    size="sm"
-                    className="print:hidden"
-                  >
-                    Print / Save as PDF
-                  </Button>
-                </div>
               </div>
             )}
           </div>

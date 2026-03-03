@@ -13,7 +13,6 @@ This calculator implements the official University of Westminster degree classif
 - **Postgraduate Calculator**: Supports PgCert, PgDip, Masters, and Integrated Masters programmes
 - **Accurate Classification**: Implements official University degree classification rules
 - **Save & Load Progress**: Browser-based storage allows students to save their module marks and return later
-- **Print & Export**: Export results to PDF for record-keeping
 
 ### User Experience
 - **Color-Coded Sliders**: Visual feedback showing performance levels as marks are adjusted
