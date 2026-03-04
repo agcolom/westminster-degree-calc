@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Trash2, Moon, Sun } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Accordion,
   AccordionContent,
@@ -69,6 +70,7 @@ const getGradeTextColor = (mark: number) => {
 };
 
 export default function Home() {
+  const { toast } = useToast();
   const [modules, setModules] = useState<YearModules>({
     level5: createInitialModules("level5", 6),
     level6: createInitialModules("level6", 6)
@@ -399,9 +401,16 @@ export default function Home() {
   const handleSave = () => {
     try {
       localStorage.setItem('ugModules', JSON.stringify(modules));
-      alert('Your module marks have been saved!');
+      toast({
+        title: "Saved successfully",
+        description: "Your module marks have been saved!",
+      });
     } catch (err) {
-      alert('Failed to save modules. Please try again.');
+      toast({
+        title: "Error",
+        description: "Failed to save modules. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -412,12 +421,22 @@ export default function Home() {
         setModules(JSON.parse(saved));
         setResult("");
         setError("");
-        alert('Your module marks have been loaded!');
+        toast({
+          title: "Loaded successfully",
+          description: "Your module marks have been loaded!",
+        });
       } else {
-        alert('No saved module marks found.');
+        toast({
+          title: "No saved data",
+          description: "No saved module marks found.",
+        });
       }
     } catch (err) {
-      alert('Failed to load modules. Please try again.');
+      toast({
+        title: "Error",
+        description: "Failed to load modules. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -441,7 +460,7 @@ export default function Home() {
   const renderModuleInputs = (level: "level5" | "level6", title: string) => (
     <div className="space-y-4 flex-1">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold tracking-tight">{title.split(" - ")[0]}</h3>
+        <h2 className="text-lg font-semibold tracking-tight">{title.split(" - ")[0]}</h2>
         {renderCreditTotal(level)}
       </div>
       <div className="space-y-4">
@@ -523,6 +542,7 @@ export default function Home() {
                     size="icon"
                     className="text-gray-400 hover:text-red-600 dark:text-gray-600 dark:hover:text-red-400 h-8 w-8"
                     onClick={() => handleRemoveModule(level, module.id)}
+                    aria-label={`Remove ${module.name || 'module'}`}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -574,12 +594,19 @@ export default function Home() {
 
   return (
     <main className="min-h-screen p-4 md:p-8 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-200 transition-colors" suppressHydrationWarning>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       <Card className="max-w-7xl mx-auto relative shadow-lg bg-white dark:bg-slate-900" suppressHydrationWarning>
         <Button
           variant="ghost"
           size="icon"
           className="absolute right-4 top-4 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
           onClick={toggleTheme}
+          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
         >
           {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
         </Button>
@@ -622,7 +649,7 @@ export default function Home() {
             </AccordionItem>
           </Accordion>
         </CardHeader>
-        <CardContent>
+        <CardContent id="main-content">
           <div className="space-y-8">
             <div className="flex flex-col lg:flex-row gap-8">
               {renderModuleInputs("level5", "Level 5 Modules")}
@@ -669,20 +696,28 @@ export default function Home() {
             </div>
 
             {error && (
-              <div className="mt-4 p-4 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-center font-medium">
+              <div
+                className="mt-4 p-4 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-center font-medium"
+                role="alert"
+                aria-live="polite"
+              >
                 {error}
               </div>
             )}
 
             {result && !error && (
               <div className="mt-4 space-y-3">
-                <div className={`p-4 rounded-lg text-center font-medium whitespace-pre-line ${
-                  result.includes("First Class") ? "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" :
-                  result.includes("Upper Division") ? "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400" :
-                  result.includes("Lower Division") ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400" :
-                  result.includes("Third Class") ? "bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400" :
-                  "bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400"
-                }`}>
+                <div
+                  className={`p-4 rounded-lg text-center font-medium whitespace-pre-line ${
+                    result.includes("First Class") ? "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" :
+                    result.includes("Upper Division") ? "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400" :
+                    result.includes("Lower Division") ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400" :
+                    result.includes("Third Class") ? "bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400" :
+                    "bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+                  }`}
+                  role="status"
+                  aria-live="polite"
+                >
                   {result}
                 </div>
               </div>

@@ -2,20 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #171717;
+    --ring: 30 64 175; /* blue-800 for visible focus in light mode */
+    --ring-offset: #ffffff;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #0a0a0a;
+      --foreground: #ededed;
+      --ring: 96 165 250; /* blue-400 for visible focus in dark mode */
+      --ring-offset: #0a0a0a;
+    }
+  }
+
+  .dark {
+    --ring: 96 165 250;
+    --ring-offset: #0a0a0a;
+  }
+
+  body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: Arial, Helvetica, sans-serif;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Enhanced keyboard focus indicators for accessibility */
+  /* Override component focus styles to ensure visibility */
+  *:focus-visible {
+    outline: 2px solid rgb(var(--ring)) !important;
+    outline-offset: 2px !important;
+  }
 }
