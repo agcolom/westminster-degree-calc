@@ -188,6 +188,14 @@ export default function PostgraduatePage() {
     }
   }, []);
 
+  // Auto-recalculate when modules change (if a calculation has been performed)
+  useEffect(() => {
+    if ((result || error) && mounted) {
+      calculateDegree();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modules]);
+
   // Removed automatic module reset on award change to allow proper Load functionality
 
   const toggleTheme = () => {
@@ -225,17 +233,17 @@ export default function PostgraduatePage() {
     field: keyof Module,
     value: string
   ) => {
-    setModules(modules.map((module, i) =>
-      i === index ? { ...module, [field]: value } : module
-    ));
-
-    // If this is a mark, credits, or level change and we've had a previous calculation
-    if ((field === "mark" || field === "credits" || field === "level") && (result || error)) {
-      // Schedule the recalculation to run after state update
-      setTimeout(() => {
-        calculateDegree();
-      }, 0);
+    // Safety check
+    if (!Array.isArray(modules)) {
+      console.error('modules state is not an array:', modules);
+      return;
     }
+
+    const updatedModules = modules.map((module, i) =>
+      i === index ? { ...module, [field]: value } : module
+    );
+    setModules(updatedModules);
+    // Note: useEffect will automatically recalculate when modules change
   };
 
   const calculateDegree = () => {
@@ -243,6 +251,12 @@ export default function PostgraduatePage() {
     setShowL6Warning(false);
     setL6WarningMessage("");
     const award = awardTypes[selectedAward];
+
+    // Safety check to ensure we have an array
+    if (!Array.isArray(modules)) {
+      console.error('modules state is not an array:', modules);
+      return;
+    }
 
     // Get valid modules (with marks and credits)
     const validModules = modules.filter(module =>
@@ -347,10 +361,10 @@ export default function PostgraduatePage() {
       classification = "Distinction";
     } else if (average >= 60) {
       classification = "Merit";
-    } else if (average >= 50) {
-      classification = "Pass";
     } else {
-      classification = "Fail";
+      // If they've reached this point, they have all required credits with passing marks
+      // So they get at least a Pass, even if average is below 50%
+      classification = "Pass";
     }
 
     // For integrated masters, also show classification without first attempt requirement
@@ -566,12 +580,6 @@ export default function PostgraduatePage() {
                 step="20"
                 value={module.credits}
                 onChange={(e) => handleModuleChange(index, "credits", e.target.value)}
-                onBlur={() => {
-                  // Recalculate when field loses focus to ensure final value is used
-                  if (result || error) {
-                    setTimeout(() => calculateDegree(), 0);
-                  }
-                }}
                 placeholder="20"
                 className={`h-8 w-16 ${markColor}`}
               />
@@ -603,12 +611,6 @@ export default function PostgraduatePage() {
                 step="0.1"
                 value={module.mark}
                 onChange={(e) => handleModuleChange(index, "mark", e.target.value)}
-                onBlur={() => {
-                  // Recalculate when field loses focus to ensure final value is used
-                  if (result || error) {
-                    setTimeout(() => calculateDegree(), 0);
-                  }
-                }}
                 className={`w-20 h-8 text-sm ${markColor}`}
               />
             </div>
@@ -631,12 +633,6 @@ export default function PostgraduatePage() {
             step={0.1}
             value={[mark]}
             onValueChange={(value) => handleModuleChange(index, "mark", value[0].toString())}
-            onValueCommit={(value) => {
-              // Recalculate when slider is released to ensure final value is used
-              if (result || error) {
-                setTimeout(() => calculateDegree(), 0);
-              }
-            }}
             className="[&_[role=slider]]:!bg-white dark:[&_[role=slider]]:!bg-slate-50 [&_.absolute.h-full]:!bg-current"
             style={{ color: `hsl(${mark <= 40
               ? mark * 0.9375
