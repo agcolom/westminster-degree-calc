@@ -900,7 +900,7 @@ export default function PostgraduatePage() {
                     aria-live="polite"
                   >
                     <div className="flex items-start gap-3">
-                      <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                      <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
                       <div className="text-amber-800 dark:text-amber-200">
                         <strong className="font-semibold">Important: </strong>
                         {l6WarningMessage}
