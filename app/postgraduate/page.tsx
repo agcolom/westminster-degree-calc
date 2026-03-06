@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Trash2, Moon, Sun } from "lucide-react";
+import { Trash2, Moon, Sun, AlertTriangle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Accordion,
@@ -37,49 +37,56 @@ const awardTypes = {
     minCredits: 60,
     maxLevel6: 20,
     totalLevel7: 60,
-    integrated: false
+    integrated: false,
+    includeL6InClassification: true // L6 modules count in classification
   },
   pgdip: {
     label: "Postgraduate Diploma (PgDip)",
     minCredits: 120,
     maxLevel6: 20,
     totalLevel7: 120,
-    integrated: false
+    integrated: false,
+    includeL6InClassification: true // L6 modules count in classification
   },
   mfa: {
     label: "Master of Fine Arts (MFA)",
     minCredits: 240,
     maxLevel6: 0,
     totalLevel7: 240,
-    integrated: false
+    integrated: false,
+    includeL6InClassification: false
   },
   mres: {
     label: "Master by Research (MRes)",
     minCredits: 180,
     maxLevel6: 20,
     totalLevel7: 180,
-    integrated: false
+    integrated: false,
+    includeL6InClassification: false // L6 modules count towards award but NOT classification
   },
   erasmus: {
     label: "Erasmus Mundus Master's",
     minCredits: 240,
     maxLevel6: 20,
     totalLevel7: 240,
-    integrated: false
+    integrated: false,
+    includeL6InClassification: false // L6 modules count towards award but NOT classification
   },
   masters: {
     label: "Master's Degree (MA, MSc, MBA, LLM, MArch, MMus)",
     minCredits: 180,
     maxLevel6: 20,
     totalLevel7: 180,
-    integrated: false
+    integrated: false,
+    includeL6InClassification: false // L6 modules count towards award but NOT classification
   },
   integrated: {
     label: "Integrated Masters (MEng, MLaw, MSci)",
     minCredits: 240,
     maxLevel6: 120,
     totalLevel7: 120,
-    integrated: true
+    integrated: true,
+    includeL6InClassification: true // L6 modules count in classification
   },
 };
 
@@ -169,6 +176,8 @@ export default function PostgraduatePage() {
   const [modules, setModules] = useState<Module[]>(createInitialModules("masters"));
   const [result, setResult] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [showL6Warning, setShowL6Warning] = useState<boolean>(false);
+  const [l6WarningMessage, setL6WarningMessage] = useState<string>("");
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
@@ -220,8 +229,8 @@ export default function PostgraduatePage() {
       i === index ? { ...module, [field]: value } : module
     ));
 
-    // If this is a mark or credits change and we've had a previous calculation
-    if ((field === "mark" || field === "credits") && (result || error)) {
+    // If this is a mark, credits, or level change and we've had a previous calculation
+    if ((field === "mark" || field === "credits" || field === "level") && (result || error)) {
       // Schedule the recalculation to run after state update
       setTimeout(() => {
         calculateDegree();
@@ -231,6 +240,8 @@ export default function PostgraduatePage() {
 
   const calculateDegree = () => {
     setError("");
+    setShowL6Warning(false);
+    setL6WarningMessage("");
     const award = awardTypes[selectedAward];
 
     // Get valid modules (with marks and credits)
@@ -289,21 +300,25 @@ export default function PostgraduatePage() {
         return;
       }
     } else {
-      // For other awards, check Level 7 and Level 6 separately
-      const needsLevel6 = award.maxLevel6 > 0;
+      // For other awards (PGCert, PGDip, Masters, etc.)
+      // L6 credits can count towards the minimum if validated as part of the award
 
-      if (level7Credits < award.totalLevel7 && needsLevel6 && level6Credits > award.maxLevel6) {
-        setError(`Insufficient Level 7 credits (${level7Credits}/${award.totalLevel7}) and too many Level 6 credits (${level6Credits}/${award.maxLevel6} max). You need at least ${award.totalLevel7} credits at Level 7 (50%+) and maximum ${award.maxLevel6} credits at Level 6.`);
-        return;
-      }
-
-      if (level7Credits < award.totalLevel7) {
-        setError(`Insufficient passing Level 7 credits (${level7Credits}/${award.totalLevel7}). You need at least ${award.totalLevel7} credits at Level 7 with marks of 50% or higher.`);
-        return;
-      }
-
+      // First check if too many L6 credits
       if (level6Credits > award.maxLevel6) {
         setError(`Too many Level 6 credits (${level6Credits}/${award.maxLevel6} max). Maximum ${award.maxLevel6} credits at Level 6.`);
+        return;
+      }
+
+      // Check if total credits meet the minimum requirement
+      if (totalCredits < award.minCredits) {
+        setError(`Insufficient passing credits (${totalCredits}/${award.minCredits}). You need at least ${award.minCredits} credits total. This can include Level 7 credits (50%+) and up to ${award.maxLevel6} credits at Level 6 (40%+) if validated as part of your award.`);
+        return;
+      }
+
+      // Ensure there's enough L7 credits (considering L6 can make up the difference)
+      const minRequiredL7 = award.minCredits - award.maxLevel6;
+      if (level7Credits < minRequiredL7) {
+        setError(`Insufficient passing Level 7 credits (${level7Credits}/${minRequiredL7} minimum). You need at least ${minRequiredL7} credits at Level 7 with marks of 50% or higher.`);
         return;
       }
     }
@@ -312,12 +327,12 @@ export default function PostgraduatePage() {
     let weightedSum = 0;
     let totalWeightedCredits = 0;
 
-    if (award.integrated) {
-      // For integrated masters, calculate based on combined L6 and L7
+    if (award.integrated || award.includeL6InClassification) {
+      // For integrated masters, PGCert, and PGDip: include both L6 and L7 in classification
       weightedSum = validModules.reduce((sum, m) => sum + (m.mark * m.credits), 0);
       totalWeightedCredits = totalCredits;
     } else {
-      // For regular postgrad awards, only use L7 for classification
+      // For other postgrad awards (Erasmus, MRes, Masters, MFA): only use L7 for classification
       weightedSum = level7Modules.reduce((sum, m) => sum + (m.mark * m.credits), 0);
       totalWeightedCredits = level7Credits;
     }
@@ -368,12 +383,41 @@ export default function PostgraduatePage() {
       resultMessage += `Level 7 Credits: ${level7Credits}`;
     } else {
       resultMessage += `Classification: ${classification}\n`;
-      resultMessage += `\nDetails:\n`;
-      resultMessage += `Level 7 Average: ${average.toFixed(2)}%\n`;
-      resultMessage += `Level 7 Credits: ${level7Credits}`;
-      if (level6Credits > 0) {
-        resultMessage += `\nLevel 6 Credits: ${level6Credits}`;
+
+      // Show accurate breakdown based on whether L6 is included
+      if (award.includeL6InClassification && level6Credits > 0) {
+        // PGCert, PGDip with L6 modules: show combined average breakdown
+        resultMessage += `\nDetails:\n`;
+        resultMessage += `Overall Average: ${average.toFixed(2)}%\n`;
+        resultMessage += `Level 7 Credits: ${level7Credits}\n`;
+        resultMessage += `Level 6 Credits: ${level6Credits}`;
+      } else if (level6Credits > 0) {
+        // Masters, MRes, Erasmus with L6 modules: show separate averages
+        resultMessage += `\nDetails:\n`;
+        resultMessage += `Level 7 Average (used for classification): ${average.toFixed(2)}%\n`;
+        const level6Average = level6Passing.reduce((sum, m) => sum + (m.mark * m.credits), 0) / level6Credits;
+        resultMessage += `Level 6 Average (not used for classification): ${level6Average.toFixed(2)}%\n`;
+        resultMessage += `Level 7 Credits: ${level7Credits}\n`;
+        resultMessage += `Level 6 Credits: ${level6Credits}`;
+      } else {
+        // No L6 modules: just show credits (average already shown above)
+        resultMessage += `\nTotal Credits: ${level7Credits}`;
       }
+    }
+
+    // Set Level 6 warning if Level 6 modules were used
+    if (level6Credits > 0 && !award.integrated) {
+      setShowL6Warning(true);
+      if (award.includeL6InClassification) {
+        // PGCert, PGDip
+        setL6WarningMessage(`Level 6 modules count towards your award and classification only if they are validated as part of your programme. Please check your programme specification.`);
+      } else {
+        // Erasmus, MRes, Masters
+        setL6WarningMessage(`Level 6 modules count towards your award only if they are validated as part of your programme. They do NOT contribute to your classification (only Level 7 modules count for classification). Please check your programme specification.`);
+      }
+    } else {
+      setShowL6Warning(false);
+      setL6WarningMessage("");
     }
 
     setResult(resultMessage);
@@ -392,6 +436,8 @@ export default function PostgraduatePage() {
     setModules(createInitialModules(selectedAward));
     setResult("");
     setError("");
+    setShowL6Warning(false);
+    setL6WarningMessage("");
   };
 
   const handleSave = () => {
@@ -419,6 +465,8 @@ export default function PostgraduatePage() {
         setSelectedAward(data.selectedAward);
         setResult("");
         setError("");
+        setShowL6Warning(false);
+        setL6WarningMessage("");
         toast({
           title: "Loaded successfully",
           description: "Your module marks have been loaded!",
@@ -652,6 +700,18 @@ export default function PostgraduatePage() {
                     Only modules you have passed will count towards your total credits and final classification.
                   </p>
                   <p className="text-lg leading-relaxed">
+                    <strong>Level 6 Modules:</strong> The contribution of Level 6 modules varies by award type:
+                  </p>
+                  <ul className="text-lg leading-relaxed list-disc list-inside space-y-1 ml-2">
+                    <li><strong>PGCert, PGDip:</strong> May include up to 20 credits at Level 6 (if validated as part of your programme). These count towards both your award <em>and</em> classification.</li>
+                    <li><strong>Erasmus Mundus, MRes, Master&apos;s (MA, MSc, MBA, LLM, MArch, MMus):</strong> May include up to 20 credits at Level 6 (if validated as part of your programme). These count towards your award but <em>not</em> your classification (only Level 7 modules count for classification).</li>
+                    <li><strong>MFA:</strong> Does not permit any Level 6 credits.</li>
+                    <li><strong>Integrated Masters:</strong> Requires 120 credits at Level 6, which count towards both award and classification.</li>
+                  </ul>
+                  <p className="text-lg leading-relaxed">
+                    Check your programme specification to confirm which Level 6 modules (if any) are validated as part of your award.
+                  </p>
+                  <p className="text-lg leading-relaxed">
                     <strong>Classification Boundaries:</strong> Distinction: 70%+, Merit: 60-69%, Pass: 50-59%.
                     For Integrated Masters, you must pass all modules at first attempt to be eligible for Merit or Distinction.
                   </p>
@@ -691,6 +751,8 @@ export default function PostgraduatePage() {
                 setModules(createInitialModules(newAward));
                 setResult("");
                 setError("");
+                setShowL6Warning(false);
+                setL6WarningMessage("");
               }}>
                 <SelectTrigger id="award-type" className="w-full">
                   <SelectValue />
@@ -831,6 +893,21 @@ export default function PostgraduatePage() {
                 >
                   {result}
                 </div>
+                {showL6Warning && (
+                  <div
+                    className="p-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 rounded-lg"
+                    role="alert"
+                    aria-live="polite"
+                  >
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                      <div className="text-amber-800 dark:text-amber-200">
+                        <strong className="font-semibold">Important: </strong>
+                        {l6WarningMessage}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
