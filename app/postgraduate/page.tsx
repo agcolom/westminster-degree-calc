@@ -504,8 +504,8 @@ export default function PostgraduatePage() {
                 id={`${module.id}-name`}
                 value={module.name}
                 onChange={(e) => handleModuleChange(index, "name", e.target.value)}
-                placeholder="e.g., Module Name"
-                className={`h-8 w-full min-w-[10ch] ${markColor}`}
+                placeholder="e.g. Module Name"
+                className={`h-8 w-full min-w-[10ch] ${markColor} placeholder:text-slate-400 dark:placeholder:text-slate-500`}
               />
             </div>
             <div className="space-y-1">

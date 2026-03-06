@@ -491,8 +491,8 @@ export default function Home() {
                         id={`${module.id}-name`}
                         value={module.name}
                         onChange={(e) => handleModuleChange(level, index, "name", e.target.value)}
-                        placeholder="e.g., CS101"
-                        className={`h-8 w-full min-w-[10ch] ${markColor}`}
+                        placeholder="e.g. Module Name"
+                        className={`h-8 w-full min-w-[10ch] ${markColor} placeholder:text-slate-400 dark:placeholder:text-slate-500`}
                       />
                     </div>
                     <div className="space-y-1">
