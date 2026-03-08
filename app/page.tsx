@@ -331,6 +331,7 @@ export default function Home() {
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', 'calculate_degree', {
         calculator_type: 'undergraduate',
+        award_type: 'honours',
         classification: classification
       });
     }
