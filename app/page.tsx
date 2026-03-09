@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { debounce } from "@/lib/utils";
 
 interface Module {
   name: string;
@@ -79,6 +80,20 @@ export default function Home() {
   const [error, setError] = useState<string>("");
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
+  // Debounced tracking function for auto-calculations
+  const debouncedTrackCalculation = useRef(
+    debounce((classification: string) => {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'calculate_degree', {
+          calculator_type: 'undergraduate',
+          award_type: 'honours',
+          classification: classification,
+          calculation_trigger: 'auto_calculation'
+        });
+      }
+    }, 2000) // Wait 2 seconds after last change
+  ).current;
+
   useEffect(() => {
     // Check system preference on mount
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -129,13 +144,13 @@ export default function Home() {
     }));
   };
 
-  const calculateDegree = () => {
+  const calculateDegree = (trigger: 'button_click' | 'auto_calculation' = 'button_click') => {
     setError("");
-    
+
     // Get valid modules (with both marks and credits, and passing grade)
-    const getValidModules = (yearModules: Module[]) => 
-      yearModules.filter(module => 
-        module.mark !== "" && !isNaN(Number(module.mark)) && 
+    const getValidModules = (yearModules: Module[]) =>
+      yearModules.filter(module =>
+        module.mark !== "" && !isNaN(Number(module.mark)) &&
         module.credits !== "" && !isNaN(Number(module.credits)) &&
         Number(module.mark) >= 40
       ).map(module => ({
@@ -332,7 +347,8 @@ export default function Home() {
       (window as any).gtag('event', 'calculate_degree', {
         calculator_type: 'undergraduate',
         award_type: 'honours',
-        classification: classification
+        classification: classification,
+        calculation_trigger: trigger
       });
     }
   };
@@ -382,7 +398,7 @@ export default function Home() {
             setResult(""); // Clear any previous result when Level 6 credits are insufficient
           } else {
             setError(""); // Clear any previous error
-            calculateDegree();
+            calculateDegree('auto_calculation');
           }
         }, 0);
       }
@@ -509,7 +525,7 @@ export default function Home() {
                         onBlur={() => {
                           // Recalculate when field loses focus to ensure final value is used
                           if (result || error) {
-                            setTimeout(() => calculateDegree(), 0);
+                            setTimeout(() => calculateDegree('auto_calculation'), 0);
                           }
                         }}
                         placeholder="20"
@@ -531,7 +547,7 @@ export default function Home() {
                         onBlur={() => {
                           // Recalculate when field loses focus to ensure final value is used
                           if (result || error) {
-                            setTimeout(() => calculateDegree(), 0);
+                            setTimeout(() => calculateDegree('auto_calculation'), 0);
                           }
                         }}
                         className={`w-20 h-8 text-sm ${markColor}`}
@@ -562,7 +578,7 @@ export default function Home() {
                     onValueCommit={(value) => {
                       // Recalculate when slider is released to ensure final value is used
                       if (result || error) {
-                        setTimeout(() => calculateDegree(), 0);
+                        setTimeout(() => calculateDegree('auto_calculation'), 0);
                       }
                     }}
                     className="[&_[role=slider]]:!bg-white dark:[&_[role=slider]]:!bg-slate-50 [&_.absolute.h-full]:!bg-current"
@@ -660,7 +676,7 @@ export default function Home() {
             <div className="space-y-3">
               <div className="flex justify-center gap-4">
                 <Button
-                  onClick={calculateDegree}
+                  onClick={() => calculateDegree('button_click')}
                   className="w-full max-w-xs text-sm sm:text-base md:text-lg font-semibold"
                   variant="outline"
                   size="lg"

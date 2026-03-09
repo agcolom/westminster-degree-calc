@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { debounce } from "@/lib/utils";
 
 interface Module {
   name: string;
@@ -180,6 +181,20 @@ export default function PostgraduatePage() {
   const [l6WarningMessage, setL6WarningMessage] = useState<string>("");
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
+  // Debounced tracking function for auto-calculations
+  const debouncedTrackCalculation = useRef(
+    debounce((classification: string, awardType: string) => {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'calculate_degree', {
+          calculator_type: 'postgraduate',
+          award_type: awardType,
+          classification: classification,
+          calculation_trigger: 'auto_calculation'
+        });
+      }
+    }, 2000) // Wait 2 seconds after last change
+  ).current;
+
   useEffect(() => {
     setMounted(true);
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -191,7 +206,7 @@ export default function PostgraduatePage() {
   // Auto-recalculate when modules change (if a calculation has been performed)
   useEffect(() => {
     if ((result || error) && mounted) {
-      calculateDegree();
+      calculateDegree('auto_calculation');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modules]);
@@ -246,7 +261,7 @@ export default function PostgraduatePage() {
     // Note: useEffect will automatically recalculate when modules change
   };
 
-  const calculateDegree = () => {
+  const calculateDegree = (trigger: 'button_click' | 'auto_calculation' = 'button_click') => {
     setError("");
     setShowL6Warning(false);
     setL6WarningMessage("");
@@ -441,7 +456,8 @@ export default function PostgraduatePage() {
       (window as any).gtag('event', 'calculate_degree', {
         calculator_type: 'postgraduate',
         award_type: selectedAward,
-        classification: classification
+        classification: classification,
+        calculation_trigger: trigger
       });
     }
   };
@@ -829,7 +845,7 @@ export default function PostgraduatePage() {
             <div className="space-y-3">
               <div className="flex justify-center gap-4">
                 <Button
-                  onClick={calculateDegree}
+                  onClick={() => calculateDegree('button_click')}
                   className="w-full max-w-xs text-sm sm:text-base md:text-lg font-semibold"
                   variant="outline"
                   size="lg"
