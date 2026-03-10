@@ -659,7 +659,7 @@ export default function PostgraduatePage() {
                 type="number"
                 min="0"
                 max="100"
-                step="1"
+                step="0.1"
                 value={module.mark}
                 onChange={(e) => handleModuleChange(index, "mark", e.target.value)}
                 className={`w-20 h-8 text-sm ${markColor}`}
@@ -681,7 +681,7 @@ export default function PostgraduatePage() {
             id={`${module.id}-mark-slider`}
             min={0}
             max={100}
-            step={1}
+            step={0.1}
             value={[mark]}
             onValueChange={(value) => handleModuleChange(index, "mark", value[0].toString())}
             aria-label={`Mark for ${module.name || 'module'}: ${mark}%`}

@@ -576,7 +576,7 @@ export default function Home() {
                         type="number"
                         min="0"
                         max="100"
-                        step="1"
+                        step="0.1"
                         value={module.mark}
                         onChange={(e) => handleModuleChange(level, index, "mark", e.target.value)}
                         onBlur={() => {
@@ -604,7 +604,7 @@ export default function Home() {
                     id={`${module.id}-mark-slider`}
                     min={0}
                     max={100}
-                    step={1}
+                    step={0.1}
                     value={[mark]}
                     onValueChange={(value) => {
                       handleModuleChange(level, index, "mark", value[0].toString());
