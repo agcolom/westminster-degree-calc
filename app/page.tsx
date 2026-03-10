@@ -576,7 +576,7 @@ export default function Home() {
                         type="number"
                         min="0"
                         max="100"
-                        step="0.1"
+                        step="1"
                         value={module.mark}
                         onChange={(e) => handleModuleChange(level, index, "mark", e.target.value)}
                         onBlur={() => {
@@ -592,7 +592,7 @@ export default function Home() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-gray-400 hover:text-red-600 dark:text-gray-600 dark:hover:text-red-400 h-8 w-8"
+                    className="text-slate-600 hover:text-red-600 dark:text-slate-300 dark:hover:text-red-400 h-8 w-8"
                     onClick={() => handleRemoveModule(level, module.id)}
                     aria-label={`Remove ${module.name || 'module'}`}
                   >
@@ -604,7 +604,7 @@ export default function Home() {
                     id={`${module.id}-mark-slider`}
                     min={0}
                     max={100}
-                    step={0.1}
+                    step={1}
                     value={[mark]}
                     onValueChange={(value) => {
                       handleModuleChange(level, index, "mark", value[0].toString());
@@ -616,6 +616,7 @@ export default function Home() {
                         setTimeout(() => calculateDegree('auto_calculation'), 0);
                       }
                     }}
+                    aria-label={`Mark for ${module.name || 'module'}: ${mark}%`}
                     className="[&_[role=slider]]:!bg-white dark:[&_[role=slider]]:!bg-slate-50 [&_.absolute.h-full]:!bg-current"
                     style={{ color: `hsl(${mark <= 30
                       ? mark * 1.25
@@ -663,7 +664,7 @@ export default function Home() {
           {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
         </Button>
         <CardHeader>
-          <CardTitle className="text-4xl font-bold tracking-tight">Undergraduate Degree Calculator</CardTitle>
+          <h1 className="text-4xl font-bold tracking-tight">Undergraduate Degree Calculator</h1>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="about">
               <AccordionTrigger className="text-lg">About</AccordionTrigger>
@@ -690,8 +691,8 @@ export default function Home() {
                     <strong>How It Works:</strong> You need at least 120 credits at Level 5 and at least 120 credits at Level 6.
                     The calculator determines the best 220 credits by calculating two provisional scores: one excluding the lowest Level 5 module, and one excluding the lowest Level 6 module. The higher score becomes your final classification, with Level 5 weighted one-third and Level 6 weighted two-thirds.
                   </p>
-                  <p className="text-sm text-muted-foreground">
-                    Looking for the postgraduate calculator? <Link href="/postgraduate" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">Click here for the Postgraduate Degree Calculator →</Link>
+                  <p className="text-lg text-muted-foreground">
+                    Looking for the postgraduate calculator? <Link href="/postgraduate" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to Postgraduate Degree Calculator →</Link>
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Developed by Anne-Gaelle Colom, University of Westminster (2026)
@@ -761,11 +762,11 @@ export default function Home() {
               <div className="mt-4 space-y-3">
                 <div
                   className={`p-4 rounded-lg text-center font-medium whitespace-pre-line ${
-                    result.includes("First Class") ? "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" :
-                    result.includes("Upper Division") ? "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400" :
-                    result.includes("Lower Division") ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400" :
-                    result.includes("Third Class") ? "bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400" :
-                    "bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+                    result.includes("First Class") ? "bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300" :
+                    result.includes("Upper Division") ? "bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300" :
+                    result.includes("Lower Division") ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300" :
+                    result.includes("Third Class") ? "bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300" :
+                    "bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300"
                   }`}
                   role="status"
                   aria-live="polite"

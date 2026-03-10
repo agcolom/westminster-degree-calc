@@ -659,7 +659,7 @@ export default function PostgraduatePage() {
                 type="number"
                 min="0"
                 max="100"
-                step="0.1"
+                step="1"
                 value={module.mark}
                 onChange={(e) => handleModuleChange(index, "mark", e.target.value)}
                 className={`w-20 h-8 text-sm ${markColor}`}
@@ -669,7 +669,7 @@ export default function PostgraduatePage() {
           <Button
             variant="ghost"
             size="icon"
-            className="text-gray-400 hover:text-red-600 dark:text-gray-600 dark:hover:text-red-400 h-8 w-8"
+            className="text-slate-600 hover:text-red-600 dark:text-slate-300 dark:hover:text-red-400 h-8 w-8"
             onClick={() => handleRemoveModule(module.id)}
             aria-label={`Remove ${module.name || 'module'}`}
           >
@@ -681,9 +681,10 @@ export default function PostgraduatePage() {
             id={`${module.id}-mark-slider`}
             min={0}
             max={100}
-            step={0.1}
+            step={1}
             value={[mark]}
             onValueChange={(value) => handleModuleChange(index, "mark", value[0].toString())}
+            aria-label={`Mark for ${module.name || 'module'}: ${mark}%`}
             className="[&_[role=slider]]:!bg-white dark:[&_[role=slider]]:!bg-slate-50 [&_.absolute.h-full]:!bg-current"
             style={{ color: `hsl(${mark <= 40
               ? mark * 0.9375
@@ -731,7 +732,7 @@ export default function PostgraduatePage() {
           {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
         </Button>
         <CardHeader>
-          <CardTitle className="text-4xl font-bold tracking-tight">Postgraduate Degree Calculator</CardTitle>
+          <h1 className="text-4xl font-bold tracking-tight">Postgraduate Degree Calculator</h1>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="about">
               <AccordionTrigger className="text-lg">About</AccordionTrigger>
@@ -777,8 +778,8 @@ export default function PostgraduatePage() {
                   <p className="text-lg leading-relaxed">
                     <strong>How It Works:</strong> The calculator computes a credit-weighted average of your passing modules to determine whether you achieve a Pass, Merit, or Distinction.
                   </p>
-                  <p className="text-sm text-muted-foreground">
-                    Looking for the undergraduate calculator? <Link href="/" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">Click here for the Undergraduate Degree Calculator →</Link>
+                  <p className="text-lg text-muted-foreground">
+                    Looking for the undergraduate calculator? <Link href="/" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to Undergraduate Degree Calculator →</Link>
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Developed by Anne-Gaelle Colom, University of Westminster (2026)
@@ -930,10 +931,10 @@ export default function PostgraduatePage() {
               <div className="mt-4 space-y-3">
                 <div
                   className={`p-4 rounded-lg text-center font-medium whitespace-pre-line ${
-                    result.includes("Distinction") ? "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" :
-                    result.includes("Merit") ? "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400" :
-                    result.includes("Pass") ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400" :
-                    "bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+                    result.includes("Distinction") ? "bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300" :
+                    result.includes("Merit") ? "bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300" :
+                    result.includes("Pass") ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300" :
+                    "bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300"
                   }`}
                   role="status"
                   aria-live="polite"
