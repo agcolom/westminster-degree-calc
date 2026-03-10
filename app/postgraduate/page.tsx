@@ -477,6 +477,14 @@ export default function PostgraduatePage() {
         title: "Saved successfully",
         description: "Your module marks have been saved!",
       });
+
+      // Track save event in Google Analytics
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'save_marks', {
+          calculator_type: 'postgraduate',
+          award_type: selectedAward
+        });
+      }
     } catch (err) {
       toast({
         title: "Error",
@@ -501,11 +509,29 @@ export default function PostgraduatePage() {
           title: "Loaded successfully",
           description: "Your module marks have been loaded!",
         });
+
+        // Track successful load event in Google Analytics
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'load_marks', {
+            calculator_type: 'postgraduate',
+            award_type: data.selectedAward,
+            load_status: 'success'
+          });
+        }
       } else {
         toast({
           title: "No saved data",
           description: "No saved module marks found.",
         });
+
+        // Track failed load (no data) in Google Analytics
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'load_marks', {
+            calculator_type: 'postgraduate',
+            award_type: selectedAward,
+            load_status: 'no_data'
+          });
+        }
       }
     } catch (err) {
       toast({
@@ -513,6 +539,15 @@ export default function PostgraduatePage() {
         description: "Failed to load modules. Please try again.",
         variant: "destructive",
       });
+
+      // Track error in Google Analytics
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'load_marks', {
+          calculator_type: 'postgraduate',
+          award_type: selectedAward,
+          load_status: 'error'
+        });
+      }
     }
   };
 
