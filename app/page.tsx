@@ -664,7 +664,7 @@ export default function Home() {
           {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
         </Button>
         <CardHeader>
-          <h1 className="text-4xl font-bold tracking-tight pr-16">Undergraduate Degree Calculator</h1>
+          <h1 className="text-4xl font-bold tracking-tight pr-16 break-words">Undergraduate Degree Calculator</h1>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="about">
               <AccordionTrigger className="text-lg">About</AccordionTrigger>
