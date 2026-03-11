@@ -779,7 +779,7 @@ export default function PostgraduatePage() {
                     <strong>How It Works:</strong> The calculator computes a credit-weighted average of your passing modules to determine whether you achieve a Pass, Merit, or Distinction.
                   </p>
                   <p className="text-lg text-muted-foreground">
-                    Looking for the undergraduate calculator? <Link href="/" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to Undergraduate Degree Calculator →</Link>
+                    For undergraduate degrees: <Link href="/" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to Undergraduate Degree Calculator →</Link>
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Developed by Anne-Gaelle Colom, University of Westminster (2026)

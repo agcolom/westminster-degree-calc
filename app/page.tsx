@@ -692,7 +692,7 @@ export default function Home() {
                     The calculator determines the best 220 credits by calculating two provisional scores: one excluding the lowest Level 5 module, and one excluding the lowest Level 6 module. The higher score becomes your final classification, with Level 5 weighted one-third and Level 6 weighted two-thirds.
                   </p>
                   <p className="text-lg text-muted-foreground">
-                    Looking for the postgraduate calculator? <Link href="/postgraduate" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to Postgraduate Degree Calculator →</Link>
+                    For postgraduate degrees: <Link href="/postgraduate" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to Postgraduate Degree Calculator →</Link>
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Developed by Anne-Gaelle Colom, University of Westminster (2026)
