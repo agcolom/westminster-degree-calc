@@ -781,7 +781,7 @@ export default function PostgraduatePage() {
                   <p className="text-lg text-muted-foreground">
                     For undergraduate degrees: <Link href="/" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to Undergraduate Degree Calculator →</Link>
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-lg text-muted-foreground">
                     Developed by Anne-Gaelle Colom, University of Westminster (2026)
                   </p>
                 </div>
