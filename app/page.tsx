@@ -503,7 +503,7 @@ export default function Home() {
 
     return (
       <div className={`text-sm font-medium ${isValid ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-        Total Credits: {totalCredits} / {requiredCredits}
+        Total credits: {totalCredits} / {requiredCredits}
         {totalCredits > 0 && <span className="text-xs ml-1">(passing modules only)</span>}
       </div>
     );
@@ -538,12 +538,12 @@ export default function Home() {
                 <div className="flex justify-between items-start gap-2">
                   <div className="grid grid-cols-1 xs:grid-cols-[2fr,auto,auto] gap-2 flex-grow">
                     <div className="space-y-1">
-                      <Label htmlFor={`${module.id}-name`} className={`text-sm font-medium ${textColor}`}>Module Name/Code</Label>
+                      <Label htmlFor={`${module.id}-name`} className={`text-sm font-medium ${textColor}`}>Module name or code (optional)</Label>
                       <Input
                         id={`${module.id}-name`}
                         value={module.name}
                         onChange={(e) => handleModuleChange(level, index, "name", e.target.value)}
-                        placeholder="e.g. Module Name"
+                        placeholder="Eg: Research Methods"
                         className={`h-8 w-full min-w-[10ch] ${markColor} placeholder:text-slate-400 dark:placeholder:text-slate-500`}
                       />
                     </div>
@@ -664,7 +664,7 @@ export default function Home() {
           {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
         </Button>
         <CardHeader>
-          <h1 className="text-4xl font-bold tracking-tight pr-16 break-words">Undergraduate Degree Calculator</h1>
+          <h1 className="text-2xl sm:text-4xl font-bold tracking-tight pr-16 break-words">Undergraduate degree calculator</h1>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="about">
               <AccordionTrigger className="text-lg">About</AccordionTrigger>
@@ -717,7 +717,7 @@ export default function Home() {
                   variant="outline"
                   size="lg"
                 >
-                  Calculate Classification
+                  Calculate classification
                 </Button>
                 <Button
                   onClick={handleReset}
@@ -725,7 +725,7 @@ export default function Home() {
                   variant="outline"
                   size="lg"
                 >
-                  Reset All
+                  Reset all
                 </Button>
               </div>
               <div className="flex justify-center gap-4">
@@ -735,7 +735,7 @@ export default function Home() {
                   variant="outline"
                   size="default"
                 >
-                  Save My Marks
+                  Save my marks
                 </Button>
                 <Button
                   onClick={handleLoad}
@@ -743,7 +743,7 @@ export default function Home() {
                   variant="outline"
                   size="default"
                 >
-                  Load My Marks
+                  Load my marks
                 </Button>
               </div>
             </div>
