@@ -79,6 +79,9 @@ export default function Home() {
   const [result, setResult] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const resultRef = useRef<HTMLDivElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
+  const scrollPending = useRef(false);
 
   // Debounced tracking function for auto-calculations
   const debouncedTrackCalculation = useRef(
@@ -101,6 +104,14 @@ export default function Home() {
       document.body.classList.add("dark");
     }
   }, []);
+
+  useEffect(() => {
+    if (scrollPending.current && (result || error)) {
+      scrollPending.current = false;
+      const target = resultRef.current || errorRef.current;
+      target?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [result, error]);
 
   const toggleTheme = () => {
     setTheme(current => {
@@ -712,7 +723,7 @@ export default function Home() {
             <div className="space-y-3">
               <div className="flex justify-center gap-4">
                 <Button
-                  onClick={() => calculateDegree('button_click')}
+                  onClick={() => { if (!result && !error) scrollPending.current = true; calculateDegree('button_click'); }}
                   className="w-full max-w-xs text-sm sm:text-base md:text-lg font-semibold"
                   variant="outline"
                   size="lg"
@@ -750,6 +761,7 @@ export default function Home() {
 
             {error && (
               <div
+                ref={errorRef}
                 className="mt-4 p-4 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-center font-medium"
                 role="alert"
                 aria-live="polite"
@@ -759,7 +771,7 @@ export default function Home() {
             )}
 
             {result && !error && (
-              <div className="mt-4 space-y-3">
+              <div ref={resultRef} className="mt-4 space-y-3">
                 <div
                   className={`p-4 rounded-lg text-center font-medium whitespace-pre-line ${
                     result.includes("First Class") ? "bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300" :
