@@ -744,61 +744,70 @@ export default function PostgraduatePage() {
         </Button>
         <CardHeader>
           <h1 className="text-2xl sm:text-4xl font-bold tracking-tight pr-16 break-words">Postgraduate degree calculator</h1>
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="about">
-              <AccordionTrigger className="text-lg">About</AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-4">
-                  <p className="text-lg leading-relaxed">
-                    Use this tool to get a helpful estimate of the postgraduate award you might achieve by the end of your course, based on the marks you have so far.
-                    If you&apos;re missing any marks, you can simply enter what you expect to get. Please note that this provides an estimate only and should not be taken as a definitive prediction of your final classification.
-                  </p>
-                  <p className="text-lg leading-relaxed">
-                    <strong>Passing Requirements:</strong> To earn credits for a module, you must achieve at least 50% for Level 7 modules (postgraduate level),
-                    or at least 40% for Level 6 modules (undergraduate level, where permitted).
-                    Only modules you have passed will count towards your total credits and final classification.
-                  </p>
-                  <p className="text-lg leading-relaxed">
-                    <strong>Level 6 Modules:</strong> The contribution of Level 6 modules varies by award type:
-                  </p>
-                  <ul className="text-lg leading-relaxed list-disc list-inside space-y-1 ml-2">
-                    <li><strong>PGCert, PGDip:</strong> May include up to 20 credits at Level 6 (if validated as part of your programme). These count towards both your award <em>and</em> classification.</li>
-                    <li><strong>Erasmus Mundus, MRes, Master&apos;s (MA, MSc, MBA, LLM, MArch, MMus):</strong> May include up to 20 credits at Level 6 (if validated as part of your programme). These count towards your award but <em>not</em> your classification (only Level 7 modules count for classification).</li>
-                    <li><strong>MFA:</strong> Does not permit any Level 6 credits.</li>
-                    <li><strong>Integrated Masters:</strong> Requires 120 credits at Level 6, which count towards both award and classification.</li>
+          <div className="space-y-4 mt-2">
+            <p className="text-base leading-relaxed">
+              Use our degree calculator to get a helpful estimate of the degree result you might achieve by the end of your course, based on the marks you have so far.
+            </p>
+            <p className="text-base leading-relaxed">Please note:</p>
+            <ul className="text-base leading-relaxed list-disc list-inside space-y-2 ml-2">
+              <li>this tool provides an estimate only and should not be taken as a definitive prediction of your final classification</li>
+              <li>if you&apos;re missing any marks, you can simply enter what you expect to get</li>
+            </ul>
+            <p className="text-base leading-relaxed">
+              For undergraduate degrees: <Link href="/" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to undergraduate degree calculator</Link>
+            </p>
+            <p className="text-base leading-relaxed">
+              Find out more about degree classifications on the <a href="https://westminsterd8.prod.acquia-sites.com/current-students/studies/your-student-journey/completing-your-studies/award-documents-and-degree-classifications/degree-classification-calculator" className="text-blue-600 dark:text-blue-400 underline font-medium" target="_blank" rel="noopener noreferrer">University website</a>.
+            </p>
+            <p className="text-base leading-relaxed">
+              View our <Link href="/accessibility" className="text-blue-600 dark:text-blue-400 underline font-medium">accessibility statement</Link>.
+            </p>
+
+            <Accordion type="multiple" className="w-full">
+              <AccordionItem value="how-to-use">
+                <AccordionTrigger className="text-base font-bold">How to use the postgraduate calculator</AccordionTrigger>
+                <AccordionContent>
+                  <ul className="text-base leading-relaxed list-disc list-inside space-y-2 ml-2">
+                    <li>Select your award type from the dropdown (eg PgCert, PgDip, Master&apos;s or Integrated Master&apos;s)</li>
+                    <li>For all modules, enter the module name (optional), credits and marks</li>
+                    <li>Use the sliders or type directly to adjust marks – the colours indicate your performance</li>
+                    <li>Click &apos;Calculate classification&apos; to see your estimated degree classification</li>
+                    <li>Use &apos;Save my marks&apos; to save your progress and &apos;Load my marks&apos; to restore it later</li>
+                    <li>Click &apos;Reset all&apos; to start over with empty modules</li>
                   </ul>
-                  <p className="text-lg leading-relaxed">
-                    Check your programme specification to confirm which Level 6 modules (if any) are validated as part of your award.
-                  </p>
-                  <p className="text-lg leading-relaxed">
-                    <strong>Classification Boundaries:</strong> Distinction: 70%+, Merit: 60-69%, Pass: 50-59%.
-                    For Integrated Masters, you must pass all modules at first attempt to be eligible for Merit or Distinction.
-                  </p>
-                  <p className="text-lg leading-relaxed">
-                    <strong>How to Use:</strong>
-                  </p>
-                  <ol className="text-lg leading-relaxed list-decimal list-inside space-y-2 ml-2">
-                    <li>Select your award type from the dropdown (PgCert, PgDip, Masters, or Integrated Masters)</li>
-                    <li>Enter your module names (optional), credits, marks, and levels</li>
-                    <li>Use the sliders or type directly to adjust marks - the colours indicate your performance</li>
-                    <li>Click &quot;Add Module&quot; if you need to add more modules</li>
-                    <li>Click &quot;Calculate Classification&quot; to see your degree classification</li>
-                    <li>Use &quot;Save My Marks&quot; to save your progress and &quot;Load My Marks&quot; to restore it later</li>
-                    <li>Click &quot;Reset All&quot; to start over with empty modules</li>
-                  </ol>
-                  <p className="text-lg leading-relaxed">
-                    <strong>How It Works:</strong> The calculator computes a credit-weighted average of your passing modules to determine whether you achieve a Pass, Merit, or Distinction.
-                  </p>
-                  <p className="text-lg text-muted-foreground">
-                    For undergraduate degrees: <Link href="/" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to Undergraduate Degree Calculator →</Link>
-                  </p>
-                  <p className="text-lg text-muted-foreground">
-                    Developed by Anne-Gaelle Colom, University of Westminster (2026)
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="how-we-calculate">
+                <AccordionTrigger className="text-base font-bold">How we calculate postgraduate classifications</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4">
+                    <p className="text-base leading-relaxed">The calculator uses a credit-weighted average of the modules you&apos;ve passed to determine whether you&apos;ve achieved a Pass, Merit or Distinction.</p>
+                    <p className="text-base leading-relaxed">Only modules you&apos;ve passed count towards your total credit requirement and final classification.</p>
+                    <p className="text-base leading-relaxed">To earn credits for a module, you must achieve either:</p>
+                    <ul className="text-base leading-relaxed list-disc list-inside space-y-2 ml-2">
+                      <li>50% or higher for Level 7 modules (postgraduate level)</li>
+                      <li>40% or higher for Level 6 modules (undergraduate level, where permitted)</li>
+                    </ul>
+                    <p className="text-base leading-relaxed">Level 6 modules only count if they&apos;re a validated part of your course. If so, they can count towards your total credit requirement or towards your final classification.</p>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="level6-weighting">
+                <AccordionTrigger className="text-base font-bold">How eligible Level 6 modules are weighted</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4">
+                    <p className="text-base leading-relaxed">The weighting of eligible Level 6 modules varies by award type:</p>
+                    <ul className="text-base leading-relaxed list-disc list-inside space-y-2 ml-2">
+                      <li><strong>PGCert and PGDip:</strong> you can use up to 20 credits at Level 6 to meet the total required credits and towards your final classification</li>
+                      <li><strong>Integrated Master&apos;s:</strong> you&apos;ll need 120 credits at Level 6, and you must pass all modules on your first attempt to be eligible for Merit or Distinction</li>
+                      <li><strong>MFA:</strong> you can only use Level 7 credits towards the credit requirement and final classification</li>
+                      <li><strong>MRes, Master&apos;s (MA, MSc, MBA, LLM, MArch, MMus) and Erasmus Mundus:</strong> you can use up to 20 Level 6 credits towards the required minimum credits, but only Level 7 modules are used to calculate your final classification</li>
+                    </ul>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
         </CardHeader>
         <CardContent id="main-content">
           <div className="space-y-8">
@@ -972,6 +981,9 @@ export default function PostgraduatePage() {
             )}
           </div>
         </CardContent>
+        <div className="px-6 py-3 border-t border-slate-200 dark:border-slate-700">
+          <p className="text-xs text-muted-foreground">For comments and suggestions, please contact <a href="mailto:A.Colom@westminster.ac.uk" className="underline hover:text-foreground">Anne-Gaelle Colom</a>, University of Westminster.</p>
+        </div>
       </Card>
     </main>
   );

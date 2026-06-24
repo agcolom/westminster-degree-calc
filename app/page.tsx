@@ -676,42 +676,60 @@ export default function Home() {
         </Button>
         <CardHeader>
           <h1 className="text-2xl sm:text-4xl font-bold tracking-tight pr-16 break-words">Undergraduate degree calculator</h1>
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="about">
-              <AccordionTrigger className="text-lg">About</AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-4">
-                  <p className="text-lg leading-relaxed">
-                    Use this tool to get a helpful estimate of the undergraduate award you might achieve by the end of your course, based on the marks you have so far.
-                    If you&apos;re missing any marks, you can simply enter what you expect to get. Please note that this provides an estimate only and should not be taken as a definitive prediction of your final classification.
-                  </p>
-                  <p className="text-lg leading-relaxed">
-                    <strong>Important:</strong> This calculator assumes you have already passed Level 4 (Year 1) with at least 120 credits at 40% or higher. Level 4 results do not count towards your final degree classification.
-                  </p>
-                  <p className="text-lg leading-relaxed">
-                    <strong>How to Use:</strong>
-                  </p>
-                  <ol className="text-lg leading-relaxed list-decimal list-inside space-y-2 ml-2">
-                    <li>Enter your module names (optional), credits, and marks for Level 5 and Level 6</li>
-                    <li>Use the sliders or type directly to adjust marks - the colours indicate your performance</li>
-                    <li>Click &quot;Calculate Classification&quot; to see your degree classification</li>
-                    <li>Use &quot;Save My Marks&quot; to save your progress and &quot;Load My Marks&quot; to restore it later</li>
-                    <li>Click &quot;Reset All&quot; to start over with empty modules</li>
-                  </ol>
-                  <p className="text-lg leading-relaxed">
-                    <strong>How It Works:</strong> You need at least 120 credits at Level 5 and at least 120 credits at Level 6.
-                    The calculator determines the best 220 credits by calculating two provisional scores: one excluding the lowest Level 5 module, and one excluding the lowest Level 6 module. The higher score becomes your final classification, with Level 5 weighted one-third and Level 6 weighted two-thirds.
-                  </p>
-                  <p className="text-lg text-muted-foreground">
-                    For postgraduate degrees: <Link href="/postgraduate" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to Postgraduate Degree Calculator →</Link>
-                  </p>
-                  <p className="text-lg text-muted-foreground">
-                    Developed by Anne-Gaelle Colom, University of Westminster (2026)
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+          <div className="space-y-4 mt-2">
+            <p className="text-base leading-relaxed">
+              Use our degree calculator to get a helpful estimate of the degree result you might achieve by the end of your course, based on the marks you have so far.
+            </p>
+            <p className="text-base leading-relaxed">Please note:</p>
+            <ul className="text-base leading-relaxed list-disc list-inside space-y-2 ml-2">
+              <li>if you&apos;re missing any marks, you can simply enter what you expect to get</li>
+              <li>this tool provides an estimate only and should not be taken as a definitive prediction of your final classification</li>
+              <li>this calculator assumes you have already passed Level 4 (Year 1) with at least 120 credits at 40% or higher</li>
+              <li>results from Level 4 (Year 1) don&apos;t count towards your final degree classification</li>
+            </ul>
+            <p className="text-base leading-relaxed">
+              For postgraduate degrees: <Link href="/postgraduate" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to postgraduate degree calculator</Link>
+            </p>
+            <p className="text-base leading-relaxed">
+              Find out more about degree classifications on the <a href="https://westminsterd8.prod.acquia-sites.com/current-students/studies/your-student-journey/completing-your-studies/award-documents-and-degree-classifications/degree-classification-calculator" className="text-blue-600 dark:text-blue-400 underline font-medium" target="_blank" rel="noopener noreferrer">University website</a>.
+            </p>
+            <p className="text-base leading-relaxed">
+              View our <Link href="/accessibility" className="text-blue-600 dark:text-blue-400 underline font-medium">accessibility statement</Link>.
+            </p>
+
+            <Accordion type="multiple" className="w-full">
+              <AccordionItem value="how-to-use">
+                <AccordionTrigger className="text-base font-bold">How to use the undergraduate calculator</AccordionTrigger>
+                <AccordionContent>
+                  <ul className="text-base leading-relaxed list-disc list-inside space-y-2 ml-2">
+                    <li>For all modules at Level 5 and Level 6 (Years 2 and 3), enter the module name (optional), credits and marks</li>
+                    <li>Use the sliders or type directly to adjust marks – the colours indicate your performance</li>
+                    <li>Click &apos;Calculate classification&apos; to see your estimated degree classification</li>
+                    <li>Use &apos;Save my marks&apos; to save your progress and &apos;Load my marks&apos; to restore it later</li>
+                    <li>Click &apos;Reset all&apos; to start over with empty modules</li>
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="how-we-calculate">
+                <AccordionTrigger className="text-base font-bold">How we calculate undergraduate classifications</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4">
+                    <p className="text-base leading-relaxed">To get a classification, you need to receive:</p>
+                    <ul className="text-base leading-relaxed list-disc list-inside space-y-2 ml-2">
+                      <li>at least 120 credits at Level 5 (Year 2), weighted at one-third towards your final score</li>
+                      <li>at least 120 credits at Level 6 (Year 3), weighted at two-thirds towards your final score</li>
+                    </ul>
+                    <p className="text-base leading-relaxed">We determine the best 220 credits by calculating two provisional scores:</p>
+                    <ul className="text-base leading-relaxed list-disc list-inside space-y-2 ml-2">
+                      <li>one score that excludes your lowest Level 5 (Year 2) module</li>
+                      <li>one score that excludes your lowest Level 6 (Year 3) module</li>
+                    </ul>
+                    <p className="text-base leading-relaxed">The higher of these two scores becomes your final classification.</p>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
         </CardHeader>
         <CardContent id="main-content">
           <div className="space-y-8">
@@ -789,6 +807,9 @@ export default function Home() {
             )}
           </div>
         </CardContent>
+        <div className="px-6 py-3 border-t border-slate-200 dark:border-slate-700">
+          <p className="text-xs text-muted-foreground">For comments and suggestions, please contact <a href="mailto:A.Colom@westminster.ac.uk" className="underline hover:text-foreground">Anne-Gaelle Colom</a>, University of Westminster.</p>
+        </div>
       </Card>
     </main>
   );
