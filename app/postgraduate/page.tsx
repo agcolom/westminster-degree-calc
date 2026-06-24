@@ -754,7 +754,7 @@ export default function PostgraduatePage() {
               <li>if you&apos;re missing any marks, you can simply enter what you expect to get</li>
             </ul>
             <p className="text-base leading-relaxed">
-              For undergraduate degrees: <Link href="/" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to undergraduate degree calculator</Link>
+              For undergraduate degrees: <Link href="/" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to undergraduate degree calculator</Link>.
             </p>
             <p className="text-base leading-relaxed">
               Find out more about degree classifications on the <a href="https://westminsterd8.prod.acquia-sites.com/current-students/studies/your-student-journey/completing-your-studies/award-documents-and-degree-classifications/degree-classification-calculator" className="text-blue-600 dark:text-blue-400 underline font-medium" target="_blank" rel="noopener noreferrer">University website</a>.

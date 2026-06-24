@@ -22,7 +22,7 @@ export default function AccessibilityPage() {
               In the meantime, if you experience any accessibility issues or need this content in a different format, please contact <a href="mailto:A.Colom@westminster.ac.uk" className="text-blue-600 dark:text-blue-400 underline font-medium">Anne-Gaelle Colom</a>.
             </p>
             <p className="text-base leading-relaxed mt-4">
-              <Link href="/" className="text-blue-600 dark:text-blue-400 underline font-medium">Back to undergraduate degree calculator</Link>
+              <Link href="/" className="text-blue-600 dark:text-blue-400 underline font-medium">Back to undergraduate degree calculator</Link> | <Link href="/postgraduate" className="text-blue-600 dark:text-blue-400 underline font-medium">Back to postgraduate degree calculator</Link>
             </p>
           </div>
         </CardContent>

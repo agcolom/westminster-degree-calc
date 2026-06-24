@@ -688,7 +688,7 @@ export default function Home() {
               <li>results from Level 4 (Year 1) don&apos;t count towards your final degree classification</li>
             </ul>
             <p className="text-base leading-relaxed">
-              For postgraduate degrees: <Link href="/postgraduate" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to postgraduate degree calculator</Link>
+              For postgraduate degrees: <Link href="/postgraduate" className="text-blue-600 dark:text-blue-400 underline font-medium">Switch to postgraduate degree calculator</Link>.
             </p>
             <p className="text-base leading-relaxed">
               Find out more about degree classifications on the <a href="https://westminsterd8.prod.acquia-sites.com/current-students/studies/your-student-journey/completing-your-studies/award-documents-and-degree-classifications/degree-classification-calculator" className="text-blue-600 dark:text-blue-400 underline font-medium" target="_blank" rel="noopener noreferrer">University website</a>.
