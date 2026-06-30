@@ -602,7 +602,7 @@ export default function PostgraduatePage() {
     }
 
     return (
-      <div className={`text-sm font-medium ${isValid ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+      <div className={`text-sm font-medium ${isValid ? 'text-[rgb(15,137,61)] dark:text-green-400' : 'text-[rgb(211,11,5)] dark:text-red-400'}`}>
         Total credits: {totalCredits} {requiredCredits}
       </div>
     );
@@ -710,7 +710,7 @@ export default function PostgraduatePage() {
           />
         </div>
         {mark < minPassingMark && mark > 0 && (
-          <div className="mt-1 text-xs text-red-600 dark:text-red-400">
+          <div className="mt-1 text-xs text-[rgb(211,11,5)] dark:text-red-400">
             Level {module.level} requires {minPassingMark}% to pass
           </div>
         )}
@@ -940,7 +940,7 @@ export default function PostgraduatePage() {
             {error && (
               <div
                 ref={errorRef}
-                className="mt-4 p-4 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-center font-medium"
+                className="mt-4 p-4 bg-red-100 dark:bg-red-900/20 text-[rgb(211,11,5)] dark:text-red-400 rounded-lg text-center font-medium"
                 role="alert"
                 aria-live="polite"
               >

@@ -513,7 +513,7 @@ export default function Home() {
     const isValid = totalCredits >= 120;
 
     return (
-      <div className={`text-sm font-medium ${isValid ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+      <div className={`text-sm font-medium ${isValid ? 'text-[rgb(15,137,61)] dark:text-green-400' : 'text-[rgb(211,11,5)] dark:text-red-400'}`}>
         Total credits: {totalCredits} / {requiredCredits}
         {totalCredits > 0 && <span className="text-xs ml-1">(passing modules only)</span>}
       </div>
@@ -780,7 +780,7 @@ export default function Home() {
             {error && (
               <div
                 ref={errorRef}
-                className="mt-4 p-4 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-center font-medium"
+                className="mt-4 p-4 bg-red-100 dark:bg-red-900/20 text-[rgb(211,11,5)] dark:text-red-400 rounded-lg text-center font-medium"
                 role="alert"
                 aria-live="polite"
               >
