@@ -694,7 +694,7 @@ export default function Home() {
               Find out more about degree classifications on the <a href="https://westminsterd8.prod.acquia-sites.com/current-students/studies/your-student-journey/completing-your-studies/award-documents-and-degree-classifications/degree-classification-calculator" className="text-blue-600 dark:text-blue-400 underline font-medium" target="_blank" rel="noopener noreferrer">University website</a>.
             </p>
             <p className="text-base leading-relaxed">
-              View our <Link href="/accessibility" className="text-blue-600 dark:text-blue-400 underline font-medium">accessibility statement</Link>.
+              View our <a href="https://www.westminster.ac.uk/about-us/our-university/corporate-information/policies-and-documents-a-z/accessibility-statements-for-university-websites/undergraduate-and-postgraduate-degree-calculators-accessibility-statement" className="text-blue-600 dark:text-blue-400 underline font-medium" target="_blank" rel="noopener noreferrer">accessibility statement</a>.
             </p>
 
             <Accordion type="multiple" className="w-full">
