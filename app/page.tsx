@@ -157,7 +157,11 @@ export default function Home() {
     }));
   };
 
-  const calculateDegree = (trigger: 'button_click' | 'auto_calculation' = 'button_click') => {
+  // currentModules lets callers pass state that hasn't been rendered yet (e.g. straight after a change)
+  const calculateDegree = (
+    trigger: 'button_click' | 'auto_calculation' = 'button_click',
+    currentModules: YearModules = modules
+  ) => {
     setError("");
 
     // Get valid modules (with both marks and credits, and passing grade)
@@ -172,8 +176,8 @@ export default function Home() {
         credits: Number(module.credits)
       }));
 
-    const level5Modules = getValidModules(modules.level5);
-    const level6Modules = getValidModules(modules.level6);
+    const level5Modules = getValidModules(currentModules.level5);
+    const level6Modules = getValidModules(currentModules.level6);
 
     // Calculate total credits for each level (only counting passing modules)
     const level5Credits = level5Modules.reduce((sum, m) => sum + m.credits, 0);
@@ -364,7 +368,7 @@ export default function Home() {
             setResult(""); // Clear any previous result when Level 6 credits are insufficient
           } else {
             setError(""); // Clear any previous error
-            calculateDegree('auto_calculation');
+            calculateDegree('auto_calculation', newModules);
           }
         }, 0);
       }
@@ -527,12 +531,6 @@ export default function Home() {
                         step="20"
                         value={module.credits}
                         onChange={(e) => handleModuleChange(level, index, "credits", e.target.value)}
-                        onBlur={() => {
-                          // Recalculate when field loses focus to ensure final value is used
-                          if (result || error) {
-                            setTimeout(() => calculateDegree('auto_calculation'), 0);
-                          }
-                        }}
                         placeholder="20"
                         className={`h-8 w-16 ${markColor}`}
                       />
@@ -559,10 +557,6 @@ export default function Home() {
                           setBlankedMarkId(null);
                           // Put the 0 back if the field was left empty
                           if (module.mark === "") handleModuleChange(level, index, "mark", "0");
-                          // Recalculate when field loses focus to ensure final value is used
-                          if (result || error) {
-                            setTimeout(() => calculateDegree('auto_calculation'), 0);
-                          }
                         }}
                         className={`w-20 h-8 text-sm ${markColor}`}
                       />
@@ -586,14 +580,8 @@ export default function Home() {
                     step={0.1}
                     value={[mark]}
                     onValueChange={(value) => {
+                      // handleModuleChange recalculates with the new value
                       handleModuleChange(level, index, "mark", value[0].toString());
-                      // No need for explicit recalculation here as handleModuleChange will handle it
-                    }}
-                    onValueCommit={(value) => {
-                      // Recalculate when slider is released to ensure final value is used
-                      if (result || error) {
-                        setTimeout(() => calculateDegree('auto_calculation'), 0);
-                      }
                     }}
                     aria-label={`Mark for ${module.name || 'module'}: ${mark}%`}
                     className="[&_[role=slider]]:!bg-white dark:[&_[role=slider]]:!bg-slate-50 [&_.absolute.h-full]:!bg-current"
