@@ -12,9 +12,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Degree Classification Calculator",
   description: "Calculate your University of Westminster degree classification based on module scores. Implements official classification rules including the two provisional score system.",
-  icons: {
-    icon: "/favicon.png",
-  },
 };
 
 export default function RootLayout({
