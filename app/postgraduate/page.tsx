@@ -369,13 +369,14 @@ export default function PostgraduatePage() {
     let weightedSum = 0;
     let totalWeightedCredits = 0;
 
+    // Only passing modules count, matching the passing-only credit totals used as the divisor
     if (award.integrated || award.includeL6InClassification) {
       // For integrated masters, PGCert, and PGDip: include both L6 and L7 in classification
-      weightedSum = validModules.reduce((sum, m) => sum + (m.mark * m.credits), 0);
+      weightedSum = [...level6Passing, ...level7Passing].reduce((sum, m) => sum + (m.mark * m.credits), 0);
       totalWeightedCredits = totalCredits;
     } else {
       // For other postgrad awards (Erasmus, MRes, Masters, MFA): only use L7 for classification
-      weightedSum = level7Modules.reduce((sum, m) => sum + (m.mark * m.credits), 0);
+      weightedSum = level7Passing.reduce((sum, m) => sum + (m.mark * m.credits), 0);
       totalWeightedCredits = level7Credits;
     }
 
