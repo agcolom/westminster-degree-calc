@@ -199,116 +199,44 @@ export default function Home() {
       return;
     }
 
-    // Reset all modules' inclusion status
-    const resetModules = (modules: ReturnType<typeof getValidModules>) => 
-      modules.map(m => ({ ...m, isIncluded: false }));
+    type ValidModule = ReturnType<typeof getValidModules>[number];
 
-    const level5ModulesReset = resetModules(level5Modules);
-    const level6ModulesReset = resetModules(level6Modules);
-
-    // Find lowest mark modules for each level
-    const level5LowestMark = Math.min(...level5ModulesReset.map(m => m.mark));
-    const level6LowestMark = Math.min(...level6ModulesReset.map(m => m.mark));
-    
-    const level5LowestModules = level5ModulesReset.filter(m => m.mark === level5LowestMark);
-    const level6LowestModules = level6ModulesReset.filter(m => m.mark === level6LowestMark);
-
-    // Calculate two provisional indicator scores
-    const calculateProvisionalScore = (excludeLevel5: boolean) => {
-      let adjustedModules = [...level5ModulesReset, ...level6ModulesReset];
-      let excludedModuleId = "";
-      let excludedCredits = 0;
-      let excludedModuleName = "";
-      let excludedModuleMark = 0;
-      let partiallyExcluded = false;
-
-      // Calculate total credits and determine what to exclude
-      const totalPassingCredits = adjustedModules.reduce((sum, m) => sum + m.credits, 0);
-      const creditsToExclude = totalPassingCredits - 220;
-
-      if (excludeLevel5 && level5LowestModules.length > 0) {
-        // Exclude lowest Level 5 module
-        const moduleToExclude = level5LowestModules[0];
-        excludedModuleName = moduleToExclude.name || `Level 5 module`;
-        excludedModuleMark = moduleToExclude.mark;
-        
-        if (creditsToExclude < moduleToExclude.credits) {
-          // Only exclude part of the module, but if it's >20 credits, reduce to 20
-          const creditsToReduce = Math.min(creditsToExclude, moduleToExclude.credits > 20 ? moduleToExclude.credits - 20 : creditsToExclude);
-          adjustedModules = adjustedModules.map(m => 
-            m.id === moduleToExclude.id ? { ...m, credits: moduleToExclude.credits - creditsToReduce, isIncluded: true } : m
-          );
-          excludedCredits = creditsToReduce;
-          excludedModuleId = moduleToExclude.id;
-          partiallyExcluded = true;
-        } else {
-          // Exclude the entire module
-          adjustedModules = adjustedModules.filter(m => m.id !== moduleToExclude.id);
-          excludedModuleId = moduleToExclude.id;
-          excludedCredits = moduleToExclude.credits;
-        }
-      } else if (!excludeLevel5 && level6LowestModules.length > 0) {
-        // Exclude lowest Level 6 module
-        const moduleToExclude = level6LowestModules[0];
-        excludedModuleName = moduleToExclude.name || `Level 6 module`;
-        excludedModuleMark = moduleToExclude.mark;
-        
-        if (creditsToExclude < moduleToExclude.credits) {
-          // Only exclude part of the module, but if it's >20 credits, reduce to 20
-          const creditsToReduce = Math.min(creditsToExclude, moduleToExclude.credits > 20 ? moduleToExclude.credits - 20 : creditsToExclude);
-          adjustedModules = adjustedModules.map(m => 
-            m.id === moduleToExclude.id ? { ...m, credits: moduleToExclude.credits - creditsToReduce, isIncluded: true } : m
-          );
-          excludedCredits = creditsToReduce;
-          excludedModuleId = moduleToExclude.id;
-          partiallyExcluded = true;
-        } else {
-          // Exclude the entire module
-          adjustedModules = adjustedModules.filter(m => m.id !== moduleToExclude.id);
-          excludedModuleId = moduleToExclude.id;
-          excludedCredits = moduleToExclude.credits;
-        }
-      }
-
-      // Mark included modules
-      adjustedModules.forEach(module => {
-        module.isIncluded = true;
+    // Take the highest-marked credits up to the limit, splitting the last module if needed
+    const selectBestCredits = (levelModules: ValidModule[], creditLimit: number) => {
+      const sorted = [...levelModules].sort((a, b) => b.mark - a.mark);
+      let remaining = creditLimit;
+      return sorted.map(m => {
+        const creditsUsed = Math.min(m.credits, remaining);
+        remaining -= creditsUsed;
+        return { ...m, creditsUsed };
       });
+    };
 
-      // Calculate weighted averages using adjusted modules
-      // Match by id: a partially excluded module is a new object with reduced credits
-      const adjustedLevel5 = adjustedModules.filter(m => level5ModulesReset.some(l5 => l5.id === m.id));
-      const adjustedLevel6 = adjustedModules.filter(m => level6ModulesReset.some(l6 => l6.id === m.id));
+    // Each provisional score uses the best 100 credits at one level and the best 120 at the other
+    const calculateProvisionalScore = (excludeLevel5: boolean) => {
+      const selectedLevel5 = selectBestCredits(level5Modules, excludeLevel5 ? 100 : 120);
+      const selectedLevel6 = selectBestCredits(level6Modules, excludeLevel5 ? 120 : 100);
 
-      const level5TotalCredits = adjustedLevel5.reduce((sum, m) => sum + m.credits, 0);
-      const level6TotalCredits = adjustedLevel6.reduce((sum, m) => sum + m.credits, 0);
+      const totals = (selected: ReturnType<typeof selectBestCredits>) => ({
+        credits: selected.reduce((sum, m) => sum + m.creditsUsed, 0),
+        weightedSum: selected.reduce((sum, m) => sum + (m.mark * m.creditsUsed), 0)
+      });
+      const level5 = totals(selectedLevel5);
+      const level6 = totals(selectedLevel6);
 
-      const level5WeightedSum = adjustedLevel5.reduce((sum, m) => 
-        sum + (m.mark * m.credits), 0
-      );
-      const level6WeightedSum = adjustedLevel6.reduce((sum, m) => 
-        sum + (m.mark * m.credits), 0
-      );
-
-      // Calculate indicator score using the formula
       const indicatorScore = Math.round(
-        (1/3 * (level5WeightedSum / level5TotalCredits)) +
-        (2/3 * (level6WeightedSum / level6TotalCredits))
+        (1/3 * (level5.weightedSum / level5.credits)) +
+        (2/3 * (level6.weightedSum / level6.credits))
       );
 
       return {
         indicatorScore,
-        adjustedLevel5,
-        adjustedLevel6,
-        level5TotalCredits,
-        level6TotalCredits,
-        level5WeightedSum,
-        level6WeightedSum,
-        excludedModuleId,
-        excludedCredits,
-        excludedModuleName,
-        excludedModuleMark,
-        partiallyExcluded
+        level5TotalCredits: level5.credits,
+        level6TotalCredits: level6.credits,
+        level5WeightedSum: level5.weightedSum,
+        level6WeightedSum: level6.weightedSum,
+        selectedLevel5,
+        selectedLevel6
       };
     };
 
@@ -320,19 +248,34 @@ export default function Home() {
     const bestResult = provisional1.indicatorScore >= provisional2.indicatorScore ? provisional1 : provisional2;
     const usedLevel5Exclusion = provisional1.indicatorScore >= provisional2.indicatorScore;
 
+    // Credits used per module in the best result (modules not listed are failing or empty)
+    const creditsUsedById = new Map(
+      [...bestResult.selectedLevel5, ...bestResult.selectedLevel6].map(m => [m.id, m.creditsUsed])
+    );
+    const markInclusion = (m: Module) => {
+      const used = creditsUsedById.get(m.id);
+      if (used === undefined) return { ...m, isIncluded: true, partiallyExcluded: false };
+      return { ...m, isIncluded: used > 0, partiallyExcluded: used > 0 && used < Number(m.credits) };
+    };
+
     // Update modules state with inclusion information from the best result
     setModules(prev => ({
-      level5: prev.level5.map(m => ({
-        ...m,
-        isIncluded: !(m.id === bestResult.excludedModuleId && !bestResult.partiallyExcluded),
-        partiallyExcluded: m.id === bestResult.excludedModuleId && bestResult.partiallyExcluded
-      })),
-      level6: prev.level6.map(m => ({
-        ...m,
-        isIncluded: !(m.id === bestResult.excludedModuleId && !bestResult.partiallyExcluded),
-        partiallyExcluded: m.id === bestResult.excludedModuleId && bestResult.partiallyExcluded
-      }))
+      level5: prev.level5.map(markInclusion),
+      level6: prev.level6.map(markInclusion)
     }));
+
+    // Describe every module that is fully or partly left out of the best 220 credits
+    const exclusionNotes = [
+      ...bestResult.selectedLevel5.map(m => ({ ...m, levelLabel: "Level 5 module" })),
+      ...bestResult.selectedLevel6.map(m => ({ ...m, levelLabel: "Level 6 module" }))
+    ]
+      .filter(m => m.creditsUsed < m.credits)
+      .map((m, i) => {
+        const name = `${m.name || m.levelLabel} (${m.mark}%)`;
+        return m.creditsUsed > 0
+          ? `${m.credits - m.creditsUsed} credits from the ${name} are not included`
+          : `${i === 0 ? 'The' : 'the'} ${name} is not included`;
+      });
 
     // Determine classification
     let classification = "";
@@ -353,10 +296,9 @@ export default function Home() {
       `Used ${usedLevel5Exclusion ? 'Level 5' : 'Level 6'} exclusion method (better result)`,
       `Provisional Score 1 (exclude L5): ${provisional1.indicatorScore}%`,
       `Provisional Score 2 (exclude L6): ${provisional2.indicatorScore}%`,
-      bestResult.excludedModuleName ? `\nNote: ${bestResult.partiallyExcluded
-        ? `${bestResult.excludedCredits} credits from the ${bestResult.excludedModuleName} (${bestResult.excludedModuleMark}%) are not included`
-        : `The ${bestResult.excludedModuleName} (${bestResult.excludedModuleMark}%) is not included`
-      } in the best 220 credits used for your classification.` : '',
+      exclusionNotes.length > 0
+        ? `\nNote: ${exclusionNotes.join('; ')} in the best 220 credits used for your classification.`
+        : '',
       `\nReminder: This assumes you have passed Level 4 (Year 1) with at least 120 credits at 40% or higher.`
     ].join('\n');
 
