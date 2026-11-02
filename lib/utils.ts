@@ -24,3 +24,12 @@ export function debounce<T extends (...args: any[]) => any>(
     timeout = setTimeout(later, wait);
   };
 }
+
+// Keep a mark input value within 0-100; leaves empty or partial input untouched
+export function clampMark(value: string): string {
+  if (value === "" || isNaN(Number(value))) return value;
+  const mark = Number(value);
+  if (mark > 100) return "100";
+  if (mark < 0) return "0";
+  return value;
+}

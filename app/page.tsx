@@ -15,7 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { debounce } from "@/lib/utils";
+import { clampMark, debounce } from "@/lib/utils";
 
 interface Module {
   name: string;
@@ -78,6 +78,8 @@ export default function Home() {
   });
   const [result, setResult] = useState<string>("");
   const [error, setError] = useState<string>("");
+  // Mark input currently showing blank in place of its default 0, so typing replaces the 0
+  const [blankedMarkId, setBlankedMarkId] = useState<string | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const resultRef = useRef<HTMLDivElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
@@ -375,7 +377,7 @@ export default function Home() {
       const newModules = {
         ...prev,
         [level]: prev[level].map((module, i) => 
-          i === index ? { ...module, [field]: value } : module
+          i === index ? { ...module, [field]: field === "mark" ? clampMark(value) : value } : module
         )
       };
       
@@ -454,7 +456,11 @@ export default function Home() {
     try {
       const saved = localStorage.getItem('ugModules');
       if (saved) {
-        setModules(JSON.parse(saved));
+        const data: { level5: Module[]; level6: Module[] } = JSON.parse(saved);
+        setModules({
+          level5: data.level5.map(m => ({ ...m, mark: clampMark(m.mark) })),
+          level6: data.level6.map(m => ({ ...m, mark: clampMark(m.mark) }))
+        });
         setResult("");
         setError("");
         toast({
@@ -588,9 +594,18 @@ export default function Home() {
                         min="0"
                         max="100"
                         step="0.1"
-                        value={module.mark}
-                        onChange={(e) => handleModuleChange(level, index, "mark", e.target.value)}
+                        value={blankedMarkId === module.id ? "" : module.mark}
+                        onFocus={() => {
+                          if (module.mark === "0") setBlankedMarkId(module.id);
+                        }}
+                        onChange={(e) => {
+                          setBlankedMarkId(null);
+                          handleModuleChange(level, index, "mark", e.target.value);
+                        }}
                         onBlur={() => {
+                          setBlankedMarkId(null);
+                          // Put the 0 back if the field was left empty
+                          if (module.mark === "") handleModuleChange(level, index, "mark", "0");
                           // Recalculate when field loses focus to ensure final value is used
                           if (result || error) {
                             setTimeout(() => calculateDegree('auto_calculation'), 0);

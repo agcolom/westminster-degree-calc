@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { debounce } from "@/lib/utils";
+import { clampMark, debounce } from "@/lib/utils";
 
 interface Module {
   name: string;
@@ -177,6 +177,8 @@ export default function PostgraduatePage() {
   const [modules, setModules] = useState<Module[]>(createInitialModules("masters"));
   const [result, setResult] = useState<string>("");
   const [error, setError] = useState<string>("");
+  // Mark input currently showing blank in place of its default 0, so typing replaces the 0
+  const [blankedMarkId, setBlankedMarkId] = useState<string | null>(null);
   const [showL6Warning, setShowL6Warning] = useState<boolean>(false);
   const [l6WarningMessage, setL6WarningMessage] = useState<string>("");
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -266,7 +268,7 @@ export default function PostgraduatePage() {
     }
 
     const updatedModules = modules.map((module, i) =>
-      i === index ? { ...module, [field]: value } : module
+      i === index ? { ...module, [field]: field === "mark" ? clampMark(value) : value } : module
     );
     setModules(updatedModules);
     // Note: useEffect will automatically recalculate when modules change
@@ -510,7 +512,7 @@ export default function PostgraduatePage() {
       const saved = localStorage.getItem('pgModules');
       if (saved) {
         const data = JSON.parse(saved);
-        setModules(data.modules);
+        setModules(data.modules.map((m: Module) => ({ ...m, mark: clampMark(m.mark) })));
         setSelectedAward(data.selectedAward);
         setResult("");
         setError("");
@@ -671,8 +673,19 @@ export default function PostgraduatePage() {
                 min="0"
                 max="100"
                 step="0.1"
-                value={module.mark}
-                onChange={(e) => handleModuleChange(index, "mark", e.target.value)}
+                value={blankedMarkId === module.id ? "" : module.mark}
+                onFocus={() => {
+                  if (module.mark === "0") setBlankedMarkId(module.id);
+                }}
+                onChange={(e) => {
+                  setBlankedMarkId(null);
+                  handleModuleChange(index, "mark", e.target.value);
+                }}
+                onBlur={() => {
+                  setBlankedMarkId(null);
+                  // Put the 0 back if the field was left empty
+                  if (module.mark === "") handleModuleChange(index, "mark", "0");
+                }}
                 className={`w-20 h-8 text-sm ${markColor}`}
               />
             </div>
