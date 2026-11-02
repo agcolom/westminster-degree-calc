@@ -285,13 +285,17 @@ export default function Home() {
     else if (bestResult.indicatorScore >= 40) classification = "Third Class Honours (3rd)";
     else classification = "Fail";
 
+    // Say which credits an average covers, e.g. "all 120 credits" or "best 100 credits"
+    const creditsLabel = (usedCredits: number, passingCredits: number) =>
+      `${usedCredits === passingCredits ? 'all' : 'best'} ${usedCredits} credits`;
+
     // Create detailed result message
     const resultMessage = [
       `Indicator Score: ${bestResult.indicatorScore}%`,
       `Classification: ${classification}`,
       `\nDetails:`,
-      `Level 5 (Year 2) Average: ${(bestResult.level5WeightedSum / bestResult.level5TotalCredits).toFixed(2)}%`,
-      `Level 6 (Year 3) Average: ${(bestResult.level6WeightedSum / bestResult.level6TotalCredits).toFixed(2)}%`,
+      `Level 5 (Year 2) Average (${creditsLabel(bestResult.level5TotalCredits, level5Credits)}): ${(bestResult.level5WeightedSum / bestResult.level5TotalCredits).toFixed(2)}%`,
+      `Level 6 (Year 3) Average (${creditsLabel(bestResult.level6TotalCredits, level6Credits)}): ${(bestResult.level6WeightedSum / bestResult.level6TotalCredits).toFixed(2)}%`,
       `\nCalculation Method:`,
       `Used ${usedLevel5Exclusion ? 'Level 5' : 'Level 6'} exclusion method (better result)`,
       `Provisional Score 1 (exclude L5): ${provisional1.indicatorScore}%`,
