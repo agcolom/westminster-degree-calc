@@ -220,6 +220,7 @@ export default function Home() {
       let excludedCredits = 0;
       let excludedModuleName = "";
       let excludedModuleMark = 0;
+      let partiallyExcluded = false;
 
       // Calculate total credits and determine what to exclude
       const totalPassingCredits = adjustedModules.reduce((sum, m) => sum + m.credits, 0);
@@ -228,7 +229,7 @@ export default function Home() {
       if (excludeLevel5 && level5LowestModules.length > 0) {
         // Exclude lowest Level 5 module
         const moduleToExclude = level5LowestModules[0];
-        excludedModuleName = moduleToExclude.name || `Level 5 module (${moduleToExclude.mark}%)`;
+        excludedModuleName = moduleToExclude.name || `Level 5 module`;
         excludedModuleMark = moduleToExclude.mark;
         
         if (creditsToExclude < moduleToExclude.credits) {
@@ -238,6 +239,8 @@ export default function Home() {
             m.id === moduleToExclude.id ? { ...m, credits: moduleToExclude.credits - creditsToReduce, isIncluded: true } : m
           );
           excludedCredits = creditsToReduce;
+          excludedModuleId = moduleToExclude.id;
+          partiallyExcluded = true;
         } else {
           // Exclude the entire module
           adjustedModules = adjustedModules.filter(m => m.id !== moduleToExclude.id);
@@ -247,7 +250,7 @@ export default function Home() {
       } else if (!excludeLevel5 && level6LowestModules.length > 0) {
         // Exclude lowest Level 6 module
         const moduleToExclude = level6LowestModules[0];
-        excludedModuleName = moduleToExclude.name || `Level 6 module (${moduleToExclude.mark}%)`;
+        excludedModuleName = moduleToExclude.name || `Level 6 module`;
         excludedModuleMark = moduleToExclude.mark;
         
         if (creditsToExclude < moduleToExclude.credits) {
@@ -257,6 +260,8 @@ export default function Home() {
             m.id === moduleToExclude.id ? { ...m, credits: moduleToExclude.credits - creditsToReduce, isIncluded: true } : m
           );
           excludedCredits = creditsToReduce;
+          excludedModuleId = moduleToExclude.id;
+          partiallyExcluded = true;
         } else {
           // Exclude the entire module
           adjustedModules = adjustedModules.filter(m => m.id !== moduleToExclude.id);
@@ -271,8 +276,9 @@ export default function Home() {
       });
 
       // Calculate weighted averages using adjusted modules
-      const adjustedLevel5 = adjustedModules.filter(m => level5ModulesReset.includes(m));
-      const adjustedLevel6 = adjustedModules.filter(m => level6ModulesReset.includes(m));
+      // Match by id: a partially excluded module is a new object with reduced credits
+      const adjustedLevel5 = adjustedModules.filter(m => level5ModulesReset.some(l5 => l5.id === m.id));
+      const adjustedLevel6 = adjustedModules.filter(m => level6ModulesReset.some(l6 => l6.id === m.id));
 
       const level5TotalCredits = adjustedLevel5.reduce((sum, m) => sum + m.credits, 0);
       const level6TotalCredits = adjustedLevel6.reduce((sum, m) => sum + m.credits, 0);
@@ -301,7 +307,8 @@ export default function Home() {
         excludedModuleId,
         excludedCredits,
         excludedModuleName,
-        excludedModuleMark
+        excludedModuleMark,
+        partiallyExcluded
       };
     };
 
@@ -317,13 +324,13 @@ export default function Home() {
     setModules(prev => ({
       level5: prev.level5.map(m => ({
         ...m,
-        isIncluded: m.id === bestResult.excludedModuleId ? false : true,
-        partiallyExcluded: m.id === bestResult.excludedModuleId && bestResult.excludedCredits < (level5LowestModules[0]?.credits || level6LowestModules[0]?.credits || 0)
+        isIncluded: !(m.id === bestResult.excludedModuleId && !bestResult.partiallyExcluded),
+        partiallyExcluded: m.id === bestResult.excludedModuleId && bestResult.partiallyExcluded
       })),
       level6: prev.level6.map(m => ({
         ...m,
-        isIncluded: m.id === bestResult.excludedModuleId ? false : true,
-        partiallyExcluded: m.id === bestResult.excludedModuleId && bestResult.excludedCredits < (level5LowestModules[0]?.credits || level6LowestModules[0]?.credits || 0)
+        isIncluded: !(m.id === bestResult.excludedModuleId && !bestResult.partiallyExcluded),
+        partiallyExcluded: m.id === bestResult.excludedModuleId && bestResult.partiallyExcluded
       }))
     }));
 
@@ -346,7 +353,7 @@ export default function Home() {
       `Used ${usedLevel5Exclusion ? 'Level 5' : 'Level 6'} exclusion method (better result)`,
       `Provisional Score 1 (exclude L5): ${provisional1.indicatorScore}%`,
       `Provisional Score 2 (exclude L6): ${provisional2.indicatorScore}%`,
-      bestResult.excludedModuleName ? `\nNote: ${bestResult.excludedCredits < (level5LowestModules[0]?.credits || level6LowestModules[0]?.credits || 0)
+      bestResult.excludedModuleName ? `\nNote: ${bestResult.partiallyExcluded
         ? `${bestResult.excludedCredits} credits from the ${bestResult.excludedModuleName} (${bestResult.excludedModuleMark}%) are not included`
         : `The ${bestResult.excludedModuleName} (${bestResult.excludedModuleMark}%) is not included`
       } in the best 220 credits used for your classification.` : '',
